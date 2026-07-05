@@ -1,19 +1,22 @@
 # ─────────────────────────────────────────────
 # Stage 1 – Build the JAR with Maven
 # ─────────────────────────────────────────────
+# Build context = repo root (Railway default)
+# Dockerfile at = backend/Dockerfile
 FROM eclipse-temurin:21-jdk-alpine AS build
 
 WORKDIR /workspace
 
 # Copy Maven wrapper + pom first (layer caching)
-COPY .mvn/ .mvn/
-COPY pom.xml ./
+# Paths are relative to repo ROOT (Railway build context)
+COPY backend/.mvn/ .mvn/
+COPY backend/pom.xml ./
 
 # Download all dependencies (cached unless pom changes)
 RUN mvn dependency:go-offline -q 2>/dev/null || true
 
 # Copy source and build, skip tests to speed up build
-COPY src/ src/
+COPY backend/src/ src/
 RUN mvn clean package -DskipTests -q
 
 # ─────────────────────────────────────────────
@@ -37,3 +40,4 @@ ENTRYPOINT ["java", \
   "-XX:+UseContainerSupport", \
   "-XX:MaxRAMPercentage=75.0", \
   "-jar", "app.jar"]
+
