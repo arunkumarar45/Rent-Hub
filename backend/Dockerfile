@@ -3,14 +3,14 @@
 # ─────────────────────────────────────────────
 # Build context = repo root (Railway default)
 # Dockerfile at = backend/Dockerfile
-FROM eclipse-temurin:21-jdk-alpine AS build
+FROM maven:3.9-eclipse-temurin-21-alpine AS build
 
 WORKDIR /workspace
 
-# Copy Maven wrapper + pom first (layer caching)
+# Copy pom first (layer caching)
 # Paths are relative to repo ROOT (Railway build context)
-COPY backend/.mvn/ .mvn/
 COPY backend/pom.xml ./
+
 
 # Download all dependencies (cached unless pom changes)
 RUN mvn dependency:go-offline -q 2>/dev/null || true
