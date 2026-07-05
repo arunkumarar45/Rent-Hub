@@ -23,23 +23,17 @@ FROM eclipse-temurin:21-jre-alpine AS runtime
 
 WORKDIR /app
 
-# Create non-root user for security
-RUN addgroup -S renthub && adduser -S renthub -G renthub
+# Create uploads directory for local storage fallback
+RUN mkdir -p /app/uploads
 
 # Copy the fat JAR from builder stage
 COPY --from=build /workspace/target/*.jar app.jar
-
-# Create uploads directory for local storage fallback
-RUN mkdir -p /app/uploads && chown renthub:renthub /app/uploads
-
-USER renthub
 
 # Railway injects PORT env var – Spring reads server.port from it
 EXPOSE 8080
 
 ENTRYPOINT ["java", \
   "-Dspring.profiles.active=prod", \
-  "-Dserver.port=${PORT:-8080}", \
   "-XX:+UseContainerSupport", \
   "-XX:MaxRAMPercentage=75.0", \
   "-jar", "app.jar"]
