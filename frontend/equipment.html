@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gear Details - RentHub</title>
+    <meta name="description" content="View details, pricing, and availability for this equipment listing on RentHub.">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .item-meta-list {
+            display: flex;
+            gap: var(--space-4);
+            flex-wrap: wrap;
+            margin: var(--space-3) 0 var(--space-5) 0;
+        }
+        .item-meta-chip {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            background: var(--bg-surface);
+            padding: var(--space-2) var(--space-3);
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-color);
+        }
+        .section-divider {
+            height: 1px;
+            background: var(--border-color);
+            margin: var(--space-5) 0;
+        }
+        .section-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-secondary);
+            margin-bottom: var(--space-3);
+        }
+        .booking-panel {
+            position: sticky;
+            top: 84px;
+        }
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-3) 0;
+            font-size: 0.875rem;
+        }
+        .price-row:not(:last-child) {
+            border-bottom: 1px solid var(--border-color);
+        }
+        .price-row .label { color: var(--text-secondary); }
+        .price-row .value { font-weight: 600; color: var(--text-primary); }
+
+        .review-card {
+            border-bottom: 1px solid var(--border-color);
+            padding: var(--space-4) 0;
+        }
+        .review-card:last-child {
+            border-bottom: none;
+        }
+        .review-author {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .review-date {
+            font-size: 0.775rem;
+            color: var(--text-muted);
+        }
+        .review-comment {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-top: 4px;
+            line-height: 1.5;
+        }
+        .stars {
+            color: var(--color-warning);
+            display: flex;
+            gap: 2px;
+            margin-bottom: 4px;
+        }
+        .details-layout {
+            display: grid;
+            grid-template-cols: 1.2fr 0.8fr;
+            gap: var(--space-8);
+            margin-top: var(--space-4);
+        }
+        .details-image-container {
+            width: 100%;
+            aspect-ratio: 1.6;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+        .details-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        @media (max-width: 860px) {
+            .details-layout {
+                grid-template-cols: 1fr;
+            }
+            .booking-panel {
+                position: relative;
+                top: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="navbar-mount"></div>
+
+    <main class="container">
+        <!-- Breadcrumbs -->
+        <div class="breadcrumb" id="breadcrumb">
+            <a href="marketplace.html">Marketplace</a>
+            <span class="breadcrumb-sep">›</span>
+            <span id="breadcrumb-title">Loading listing…</span>
+        </div>
+
+        <!-- Loading State -->
+        <div id="details-loader-container"></div>
+
+        <!-- Error Dialog Box -->
+        <div id="error-box" class="card" style="display: none; text-align: center; max-width: 480px; margin: var(--space-12) auto; padding: var(--space-8);">
+            <div style="color: var(--color-danger); margin-bottom: var(--space-4);">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            </div>
+            <h3 style="font-size: 1.25rem; font-weight: 600; margin-bottom: var(--space-2);">Listing Unavailable</h3>
+            <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: var(--space-6);" id="error-message">This listing may have been deactivated or deleted by the owner.</p>
+            <a href="marketplace.html" class="btn btn-secondary">Return to Marketplace</a>
+        </div>
+
+        <div id="details-view" class="details-layout" style="display: none;">
+            <!-- Left Info Panel -->
+            <div>
+                <div class="details-image-container">
+                    <img id="item-image" class="details-image" src="" alt="" loading="eager">
+                </div>
+
+                <div style="margin-top: var(--space-6);">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: var(--space-4);">
+                        <div>
+                            <span id="item-category" class="equipment-category"></span>
+                            <h1 id="item-title" style="font-size: 2rem; margin-top: 4px; line-height: 1.25;"></h1>
+                        </div>
+                        <button id="favorite-btn" class="btn btn-secondary" style="width: 40px; height: 40px; padding: 0; display: flex; align-items: center; justify-content: center; border-radius: 50%;" aria-label="Add to wishlist">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="heart-icon"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path></svg>
+                        </button>
+                    </div>
+
+                    <div class="item-meta-list">
+                        <div class="item-meta-chip">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                            <span>Condition: <strong id="item-condition">—</strong></span>
+                        </div>
+                        <div class="item-meta-chip">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                            <span id="item-location">—</span>
+                        </div>
+                    </div>
+
+                    <div class="section-divider"></div>
+                    <p class="section-label">Description</p>
+                    <p id="item-description" style="font-size: 0.95rem; line-height: 1.6; color: var(--text-secondary); white-space: pre-line;"></p>
+
+                    <!-- Special Pricing -->
+                    <div id="surcharges-panel" style="display: none; margin-top: var(--space-6);">
+                        <div class="section-divider"></div>
+                        <p class="section-label">Peak Pricing Periods</p>
+                        <ul id="surcharges-list" style="font-size: 0.875rem; color: var(--text-secondary); list-style: none; padding-left: 0; display: flex; flex-direction: column; gap: var(--space-2);"></ul>
+                    </div>
+
+                    <!-- Blocked Dates -->
+                    <div id="blocked-panel" style="display: none; margin-top: var(--space-6);">
+                        <div class="section-divider"></div>
+                        <p class="section-label">Blocked / Unavailable Calendar Dates</p>
+                        <div id="blocked-list" style="display: flex; gap: var(--space-2); flex-wrap: wrap;"></div>
+                    </div>
+
+                    <!-- Reviews -->
+                    <div style="margin-top: var(--space-8);">
+                        <div class="section-divider"></div>
+                        <p class="section-label">Customer Reviews</p>
+                        <div id="reviews-list" style="display: flex; flex-direction: column;">
+                            <p style="font-size: 0.875rem; color: var(--text-secondary); padding: var(--space-4) 0;">No reviews yet for this listing.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Booking Sticky Panel -->
+            <div>
+                <div class="card booking-panel">
+                    <div style="margin-bottom: var(--space-4);">
+                        <p style="font-size: 0.75rem; color: var(--text-secondary); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 2px;">Daily Price</p>
+                        <div style="display: flex; align-items: baseline; gap: 2px;">
+                            <span id="panel-price" style="font-size: 2.25rem; font-weight: 700; color: var(--text-primary);">$0</span>
+                            <span style="font-size: 0.875rem; color: var(--text-secondary);">/day</span>
+                        </div>
+                    </div>
+
+                    <div class="section-divider" style="margin: var(--space-4) 0;"></div>
+
+                    <div style="margin-bottom: var(--space-6);">
+                        <div class="price-row">
+                            <span class="label">Refundable security deposit</span>
+                            <span class="value" id="panel-deposit">$0</span>
+                        </div>
+                        <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: var(--space-2);">The deposit is returned within 24 hours of returning the gear without issues.</p>
+                    </div>
+
+                    <button id="book-now-btn" class="btn btn-primary" style="width: 100%; height: 46px; justify-content: center; font-size: 0.95rem;">
+                        Reserve Gear Now
+                    </button>
+                    <p style="font-size: 0.75rem; color: var(--text-secondary); text-align: center; margin-top: var(--space-3);">No charge until the owner approves your rental dates.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="footer-mount"></div>
+
+    <!-- Core Modular Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/notification.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/modal.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/navbar.js"></script>
+    <script>
+        let equipmentId = null;
+        let isFavorite = false;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            equipmentId = urlParams.get('id');
+
+            if (!equipmentId) {
+                showError('No listing ID was provided.');
+                return;
+            }
+
+            const loaderContainer = document.getElementById('details-loader-container');
+            // Show custom details skeleton
+            if (window.UI) {
+                UI.showSkeleton(loaderContainer, 'card-grid', 1);
+            }
+
+            await fetchDetails();
+            await checkIfFavorite();
+
+            document.getElementById('favorite-btn').addEventListener('click', toggleFavorite);
+            document.getElementById('book-now-btn').addEventListener('click', () => {
+                if (!Auth.isLoggedIn()) { Auth.requireAuth(); return; }
+                window.location.href = `book.html?id=${equipmentId}`;
+            });
+        });
+
+        async function fetchDetails() {
+            try {
+                const response = await apiFetch(`/equipment/${equipmentId}`);
+                const loaderContainer = document.getElementById('details-loader-container');
+                loaderContainer.style.display = 'none';
+
+                if (response && response.data) {
+                    const item = response.data;
+
+                    document.getElementById('details-view').style.display = 'grid';
+                    document.getElementById('breadcrumb-title').textContent = item.title;
+                    document.title = `${item.title} - RentHub`;
+
+                    document.getElementById('item-image').src = item.imageUrl || 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=800&q=80';
+                    document.getElementById('item-image').alt = item.title;
+                    document.getElementById('item-title').textContent = item.title;
+                    document.getElementById('item-category').textContent = item.categoryName || 'Equipment';
+                    document.getElementById('item-condition').textContent = item.condition || '—';
+                    document.getElementById('item-location').textContent = item.location || '—';
+                    document.getElementById('item-description').textContent = item.description;
+                    document.getElementById('panel-price').textContent = Utils.formatCurrency(item.dailyRate);
+                    document.getElementById('panel-deposit').textContent = Utils.formatCurrency(item.deposit);
+
+                    // Dynamic Surcharges list
+                    if (item.specialPricings && item.specialPricings.length > 0) {
+                        const sList = document.getElementById('surcharges-list');
+                        sList.innerHTML = '';
+                        item.specialPricings.forEach(sp => {
+                            const li = document.createElement('li');
+                            li.style.display = 'flex';
+                            li.style.justifyContent = 'space-between';
+                            li.style.borderBottom = '1px dashed var(--border-color)';
+                            li.style.paddingBottom = '4px';
+                            li.innerHTML = `
+                                <span>${Utils.formatDate(sp.startDate)} to ${Utils.formatDate(sp.endDate)} <span style="color:var(--text-muted); font-size:0.75rem;">(${Utils.sanitize(sp.reason)})</span></span>
+                                <strong style="color:var(--color-primary);">${Utils.formatCurrency(sp.dailyRate)}/day</strong>
+                            `;
+                            sList.appendChild(li);
+                        });
+                        document.getElementById('surcharges-panel').style.display = 'block';
+                    }
+
+                    // Dynamic Blocked Dates list
+                    if (item.availabilities && item.availabilities.length > 0) {
+                        const bList = document.getElementById('blocked-list');
+                        bList.innerHTML = '';
+                        item.availabilities.forEach(av => {
+                            const badge = document.createElement('span');
+                            badge.className = 'badge badge-cancelled';
+                            badge.style.fontSize = '0.75rem';
+                            badge.style.padding = '4px 8px';
+                            badge.textContent = `${Utils.formatDate(av.blockedDate)}`;
+                            bList.appendChild(badge);
+                        });
+                        document.getElementById('blocked-panel').style.display = 'block';
+                    }
+
+                    await fetchReviews();
+                } else {
+                    throw new Error('Listing details could not be found.');
+                }
+            } catch (err) {
+                showError(err.message || 'Failed to fetch equipment details.');
+            }
+        }
+
+        async function fetchReviews() {
+            try {
+                const response = await apiFetch(`/equipment/${equipmentId}/reviews`);
+                const rList = document.getElementById('reviews-list');
+
+                if (response && response.data && response.data.length > 0) {
+                    rList.innerHTML = '';
+                    response.data.forEach(rev => {
+                        const div = document.createElement('div');
+                        div.className = 'review-card';
+
+                        let stars = '';
+                        for (let i = 1; i <= 5; i++) {
+                            stars += i <= rev.rating ? '★' : '☆';
+                        }
+
+                        div.innerHTML = `
+                            <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px;">
+                                <span class="review-author">${Utils.sanitize(rev.reviewerName || 'Renter')}</span>
+                                <span class="review-date">${Utils.formatDate(rev.createdAt)}</span>
+                            </div>
+                            <div class="stars">${stars}</div>
+                            <p class="review-comment">${Utils.sanitize(rev.comment || 'No written comment provided.')}</p>
+                        `;
+                        rList.appendChild(div);
+                    });
+                }
+            } catch (err) {
+                console.error('Failed to load reviews:', err);
+            }
+        }
+
+        async function checkIfFavorite() {
+            if (!Auth.isLoggedIn()) return;
+            try {
+                const response = await apiFetch('/wishlist');
+                if (response && response.data) {
+                    const matched = response.data.find(item => item.id == equipmentId);
+                    if (matched) {
+                        isFavorite = true;
+                        document.getElementById('heart-icon').setAttribute('fill', 'var(--color-danger)');
+                        document.getElementById('heart-icon').setAttribute('stroke', 'var(--color-danger)');
+                        document.getElementById('favorite-btn').style.borderColor = 'var(--color-danger)';
+                    }
+                }
+            } catch (err) { /* silent fail */ }
+        }
+
+        async function toggleFavorite() {
+            if (!Auth.isLoggedIn()) { Auth.requireAuth(); return; }
+            const heart = document.getElementById('heart-icon');
+            const favBtn = document.getElementById('favorite-btn');
+            try {
+                await apiFetch(`/wishlist/${equipmentId}`, { method: 'POST' });
+                isFavorite = !isFavorite;
+                
+                if (isFavorite) {
+                    heart.setAttribute('fill', 'var(--color-danger)');
+                    heart.setAttribute('stroke', 'var(--color-danger)');
+                    favBtn.style.borderColor = 'var(--color-danger)';
+                    Toast.success("Added to your wishlist!");
+                } else {
+                    heart.setAttribute('fill', 'none');
+                    heart.setAttribute('stroke', 'currentColor');
+                    favBtn.style.borderColor = '';
+                    Toast.info("Removed from your wishlist.");
+                }
+            } catch (err) {
+                console.error('Wishlist toggle fail:', err);
+                Toast.error("Failed to toggle wishlist item.");
+            }
+        }
+
+        function showError(msg) {
+            const loaderContainer = document.getElementById('details-loader-container');
+            if (loaderContainer) loaderContainer.style.display = 'none';
+            document.getElementById('details-view').style.display = 'none';
+            document.getElementById('error-message').textContent = msg;
+            document.getElementById('error-box').style.display = 'block';
+        }
+    </script>
+</body>
+</html>

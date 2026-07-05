@@ -1,0 +1,32 @@
+# Root gitignore for RentHub monorepo
+
+# ---- Backend ----
+backend/target/
+backend/.env
+backend/uploads/
+backend/compile.log
+*.jar
+*.war
+*.class
+
+# ---- Frontend ----
+frontend/.env
+.DS_Store
+
+# ---- IDE ----
+.idea/
+.vscode/
+*.iml
+*.suo
+*.user
+.project
+.classpath
+.settings/
+
+# ---- OS ----
+Thumbs.db
+ehthumbs.db
+
+# ---- Node (if ever added) ----
+node_modules/
+npm-debug.log

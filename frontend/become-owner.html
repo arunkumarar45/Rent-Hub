@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>List Your Gear - RentHub</title>
+    <meta name="description" content="List your equipment on RentHub and earn by renting it to locals near you.">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .listing-layout {
+            display: grid;
+            grid-template-cols: 1fr 340px;
+            gap: var(--space-6);
+            align-items: start;
+        }
+        .side-info {
+            position: sticky;
+            top: 84px;
+        }
+        .info-item {
+            display: flex;
+            gap: var(--space-3);
+            margin-bottom: var(--space-4);
+        }
+        .info-item-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-sm);
+            background: var(--color-primary-light);
+            border: 1px solid rgba(37, 99, 235, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            color: var(--color-primary);
+        }
+        .info-item-text h4 { font-size: 0.875rem; font-weight: 600; margin-bottom: 2px; }
+        .info-item-text p { font-size: 0.8rem; color: var(--text-secondary); line-height: 1.5; }
+
+        .drop-zone {
+            border: 2px dashed var(--border-color);
+            border-radius: var(--radius-sm);
+            padding: var(--space-6);
+            text-align: center;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            background: var(--bg-surface);
+            color: var(--text-secondary);
+        }
+        .drop-zone:hover, .drop-zone.dragover {
+            border-color: var(--color-primary);
+            background: var(--color-primary-light);
+            color: var(--color-primary);
+        }
+        .drop-zone-thumb {
+            width: 100%;
+            height: 140px;
+            object-fit: cover;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-color);
+            display: none;
+        }
+        @media (max-width: 900px) {
+            .listing-layout {
+                grid-template-cols: 1fr;
+            }
+            .side-info {
+                position: relative;
+                top: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="navbar-mount"></div>
+
+    <main class="container">
+        <div style="padding-bottom: var(--space-4); margin-bottom: var(--space-6); border-bottom: 1px solid var(--border-color);">
+            <h1 style="font-size: 1.75rem; margin-bottom: 4px; font-family: 'Manrope', sans-serif;">List Your Equipment</h1>
+            <p style="font-size: 0.875rem;">Create a detailed listing and open up your gear to start earning today.</p>
+        </div>
+
+        <div class="listing-layout">
+            <!-- Left Form Card -->
+            <div class="card">
+                <p class="section-label">Gear Information</p>
+
+                <div id="error-message" class="alert alert-danger" style="display: none;"></div>
+                <div id="success-message" class="alert alert-success" style="display: none;"></div>
+
+                <form id="listing-form" novalidate>
+                    <!-- Floating Title -->
+                    <div class="floating-group">
+                        <input type="text" id="title" class="form-input" placeholder=" " required>
+                        <label class="form-label" for="title">Gear Title (e.g. Sony A7IV Camera Body)</label>
+                        <span class="error-msg">Title is required.</span>
+                    </div>
+
+                    <!-- Category & Condition -->
+                    <div class="form-row">
+                        <div style="margin-bottom: var(--space-4);">
+                            <label style="font-size: 0.8rem; font-weight: 500; color: var(--text-secondary); display: block; margin-bottom: 4px;" for="category">Category</label>
+                            <select id="category" class="input-field" style="padding-left: var(--space-3); height: 44px;" required>
+                                <option value="">Select Category…</option>
+                            </select>
+                        </div>
+                        <div style="margin-bottom: var(--space-4);">
+                            <label style="font-size: 0.8rem; font-weight: 500; color: var(--text-secondary); display: block; margin-bottom: 4px;" for="condition">Condition</label>
+                            <select id="condition" class="input-field" style="padding-left: var(--space-3); height: 44px;" required>
+                                <option value="New">New</option>
+                                <option value="Like New">Like New</option>
+                                <option value="Good" selected>Good</option>
+                                <option value="Fair">Fair</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="section-divider"></div>
+                    <p class="section-label">Pricing</p>
+
+                    <div class="form-row">
+                        <div class="floating-group">
+                            <input type="number" id="dailyRate" class="form-input" placeholder=" " min="1" required>
+                            <label class="form-label" for="dailyRate">Daily Rental Price ($)</label>
+                            <span class="error-msg">Price must be greater than 0.</span>
+                        </div>
+                        <div class="floating-group">
+                            <input type="number" id="deposit" class="form-input" placeholder=" " min="0" required>
+                            <label class="form-label" for="deposit">Refundable Deposit ($)</label>
+                            <span class="error-msg">Enter a valid security deposit amount.</span>
+                        </div>
+                    </div>
+
+                    <div class="section-divider"></div>
+                    <p class="section-label">Location & Media</p>
+
+                    <!-- Floating Location -->
+                    <div class="floating-group">
+                        <input type="text" id="location" class="form-input" placeholder=" " required>
+                        <label class="form-label" for="location">Location (City, State / Area)</label>
+                        <span class="error-msg">Location is required.</span>
+                    </div>
+
+                    <!-- Media Upload & URL Area -->
+                    <div style="margin-bottom: var(--space-4);">
+                        <label style="font-size: 0.8rem; font-weight: 500; color: var(--text-secondary); display: block; margin-bottom: 6px;">Gear Media Photo</label>
+                        
+                        <!-- Drag & Drop Uploader Component -->
+                        <div id="upload-drop-zone" class="drop-zone mb-3">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="mb-2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+                            <p id="drop-zone-text" style="font-size: 0.85rem; font-weight: 500;">Drag & drop image file here, or click to browse</p>
+                            <span id="drop-zone-sub" style="font-size: 0.725rem;">Supports JPG, PNG up to 10MB</span>
+                            <img id="upload-preview" class="drop-zone-thumb" alt="Preview">
+                            <input type="file" id="file-upload-input" style="display: none;" accept="image/*">
+                        </div>
+
+                        <!-- Manual image URL input -->
+                        <div class="floating-group" style="margin-bottom: 0;">
+                            <input type="url" id="imageUrl" class="form-input" placeholder=" ">
+                            <label class="form-label" for="imageUrl">Or Paste Image URL (e.g. https://...)</label>
+                            <span class="error-msg">Please enter a valid HTTP/HTTPS URL.</span>
+                        </div>
+                    </div>
+
+                    <div class="section-divider"></div>
+                    <p class="section-label">Additional Description</p>
+
+                    <div class="form-group mb-6">
+                        <label style="font-size: 0.8rem; font-weight: 500; color: var(--text-secondary); display: block; margin-bottom: 4px;" for="description">Detailed Notes</label>
+                        <textarea id="description" class="input-field" placeholder="Mention included accessories, pickup parameters, user guidelines..." rows="4" style="padding-left: var(--space-3); padding-top: var(--space-2); resize: none;" required></textarea>
+                        <span id="desc-error" class="error-msg">Description is required.</span>
+                    </div>
+
+                    <button type="submit" id="submit-btn" class="btn btn-primary" style="width: 100%; height: 46px; justify-content: center;">Create Gear Listing</button>
+                </form>
+            </div>
+
+            <!-- Right Info Panel -->
+            <div class="side-info">
+                <div class="card">
+                    <p class="section-label">RentHub Owner Protocol</p>
+
+                    <div class="info-item">
+                        <div class="info-item-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                        </div>
+                        <div class="info-item-text">
+                            <h4>Publish Gear Details</h4>
+                            <p>Fill out the specifications, daily rates, and security deposit margins.</p>
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-item-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                        </div>
+                        <div class="info-item-text">
+                            <h4>Respond to Requests</h4>
+                            <p>Accept or decline reservation requests within your dashboard panel.</p>
+                        </div>
+                    </div>
+
+                    <div class="info-item" style="margin-bottom: 0;">
+                        <div class="info-item-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                        </div>
+                        <div class="info-item-text">
+                            <h4>Direct Earnings Payout</h4>
+                            <p>Once approved, generate invoice checkouts. Payouts sync automatically.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-top: var(--space-4);">
+                    <p class="section-label">Pricing Tip</p>
+                    <p style="font-size: 0.8rem; color: var(--text-secondary); line-height: 1.6;">Most owners list items at 3–5% of the gear's retail replacement value. E.g. listing a $1,000 lens for $35/day is recommended for high volume matching.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="footer-mount"></div>
+
+    <!-- Core Modular Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/notification.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/modal.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/validation.js"></script>
+    <script src="js/navbar.js"></script>
+    <script>
+        Auth.requireAuth();
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (window.Validation) {
+                Validation.initFloatingLabels();
+            }
+
+            await syncProfile();
+            await loadCategories();
+            setupFileUploader();
+        });
+
+        async function syncProfile() {
+            try {
+                const response = await apiFetch('/users/profile');
+                if (response && response.data) {
+                    localStorage.setItem('user_profile', JSON.stringify(response.data));
+                }
+            } catch (err) {
+                console.error('Profile sync fail:', err);
+            }
+        }
+
+        async function loadCategories() {
+            try {
+                const response = await apiFetch('/categories');
+                const sel = document.getElementById('category');
+                if (response && response.data) {
+                    response.data.forEach(cat => {
+                        const opt = document.createElement('option');
+                        opt.value = cat.slug;
+                        opt.textContent = cat.name;
+                        sel.appendChild(opt);
+                    });
+                }
+            } catch (err) {
+                console.error('Failed to load categories:', err);
+            }
+        }
+
+        // Setup Drag & Drop File Upload Zones
+        function setupFileUploader() {
+            const dropZone = document.getElementById('upload-drop-zone');
+            const fileInput = document.getElementById('file-upload-input');
+            const preview = document.getElementById('upload-preview');
+            const dzText = document.getElementById('drop-zone-text');
+            const dzSub = document.getElementById('drop-zone-sub');
+            const imageUrlInput = document.getElementById('imageUrl');
+
+            dropZone.addEventListener('click', () => fileInput.click());
+
+            dropZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropZone.classList.add('dragover');
+            });
+
+            dropZone.addEventListener('dragleave', () => {
+                dropZone.classList.remove('dragover');
+            });
+
+            dropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('dragover');
+                if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                    handleFileUpload(e.dataTransfer.files[0]);
+                }
+            });
+
+            fileInput.addEventListener('change', (e) => {
+                if (e.target.files && e.target.files[0]) {
+                    handleFileUpload(e.target.files[0]);
+                }
+            });
+
+            async function handleFileUpload(file) {
+                // Pre-upload UI loading indicator
+                dzText.textContent = "Uploading file to server...";
+                dzSub.textContent = "Please wait...";
+
+                const formData = new FormData();
+                formData.append('file', file);
+
+                try {
+                    const response = await apiFetch('/storage/upload', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    if (response && response.data) {
+                        const uploadedUrl = response.data;
+                        imageUrlInput.value = uploadedUrl;
+                        // Trigger float status check on input field
+                        imageUrlInput.dispatchEvent(new Event('blur'));
+
+                        // Show preview thumbnail
+                        preview.src = uploadedUrl;
+                        preview.style.display = 'block';
+                        dzText.style.display = 'none';
+                        dzSub.style.display = 'none';
+                        dropZone.querySelector('svg').style.display = 'none';
+                        Toast.success("Image uploaded successfully!");
+                    }
+                } catch (err) {
+                    console.error("Upload failed:", err);
+                    dzText.textContent = "Upload failed. Click to retry.";
+                    dzSub.textContent = err.message || "File size limits exceeded.";
+                    Toast.error("File upload failed. Max size is 10MB.");
+                }
+            }
+        }
+
+        document.getElementById('listing-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const errorDiv = document.getElementById('error-message');
+            const successDiv = document.getElementById('success-message');
+            const btn = document.getElementById('submit-btn');
+
+            errorDiv.style.display = 'none';
+            successDiv.style.display = 'none';
+
+            const title = document.getElementById('title').value.trim();
+            const categoryId = document.getElementById('category').value;
+            const condition = document.getElementById('condition').value;
+            const dailyRate = parseInt(document.getElementById('dailyRate').value);
+            const deposit = parseInt(document.getElementById('deposit').value);
+            const location = document.getElementById('location').value.trim();
+            const imageUrl = document.getElementById('imageUrl').value.trim() || null;
+            const description = document.getElementById('description').value.trim();
+
+            // Client validation checking
+            let hasErrors = false;
+            if (!title) { Validation.setFieldError(document.getElementById('title'), 'Title is required.'); hasErrors = true; }
+            if (!categoryId) { Toast.warning("Please select a category."); hasErrors = true; }
+            if (isNaN(dailyRate) || dailyRate <= 0) { Validation.setFieldError(document.getElementById('dailyRate'), 'Enter a positive price.'); hasErrors = true; }
+            if (isNaN(deposit) || deposit < 0) { Validation.setFieldError(document.getElementById('deposit'), 'Enter a valid deposit.'); hasErrors = true; }
+            if (!location) { Validation.setFieldError(document.getElementById('location'), 'Location is required.'); hasErrors = true; }
+            if (!description) { document.getElementById('desc-error').style.display = 'block'; hasErrors = true; }
+
+            if (hasErrors) return;
+
+            UI.setButtonLoading(btn, true);
+
+            try {
+                let user = Auth.getUser();
+
+                // If user is not yet an Owner, upgrade them
+                if (!user.isOwner) {
+                    const upgradeRes = await apiFetch('/users/become-owner', {
+                        method: 'POST',
+                        body: { 
+                            termsAccepted: true, 
+                            payoutDetails: 'Standard RentHub Escrow Balance Account' 
+                        }
+                    });
+                    if (upgradeRes && upgradeRes.data && upgradeRes.data.accessToken) {
+                        Auth.login(upgradeRes.data.accessToken, upgradeRes.data.refreshToken, upgradeRes.data.user);
+                        user = upgradeRes.data.user;
+                    } else {
+                        throw new Error('Failed to upgrade user profile to owner status.');
+                    }
+                }
+
+                // Create listing POST
+                await apiFetch('/owner/equipment', {
+                    method: 'POST',
+                    body: {
+                        title,
+                        description,
+                        dailyRate: dailyRate * 100, // to cents
+                        deposit: deposit * 100, // to cents
+                        condition,
+                        location,
+                        imageUrl,
+                        categorySlug: categoryId
+                    }
+                });
+
+                successDiv.textContent = 'Listing successfully created! Navigating to dashboard…';
+                successDiv.style.display = 'block';
+                Toast.success("Listing published successfully!");
+                setTimeout(() => window.location.href = 'dashboard.html', 1500);
+            } catch (err) {
+                UI.setButtonLoading(btn, false, 'Create Gear Listing');
+                errorDiv.textContent = err.message || 'Listing creation failed.';
+                errorDiv.style.display = 'flex';
+                Toast.error(errorDiv.textContent);
+            }
+        });
+    </script>
+</body>
+</html>

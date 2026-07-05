@@ -1,0 +1,107 @@
+# ──────────────────────────────────────────────────────────────
+# application-prod.yml  –  Active when SPRING_PROFILES_ACTIVE=prod
+# Railway injects all env vars listed below automatically.
+# ──────────────────────────────────────────────────────────────
+
+server:
+  port: ${PORT:8080}
+
+spring:
+  application:
+    name: renthub-backend
+
+  datasource:
+    # Railway MySQL plugin provides MYSQL_URL in the format:
+    #   mysql://user:pass@host:port/db
+    # Spring needs JDBC format. We accept either format via SPRING_DATASOURCE_URL.
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${DB_USER}
+    password: ${DB_PASS}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      connection-timeout: 30000
+      maximum-pool-size: 5
+      minimum-idle: 2
+      idle-timeout: 600000
+      max-lifetime: 1800000
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    out-of-order: true
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+
+  # ── Use in-memory cache in prod (no Redis dependency required)
+  #    CacheConfig has @Profile("!prod") on simpleCacheManager
+  #    and @Profile("prod") on redisCacheManager.
+  #    We override to simple so we don't need Redis on Railway.
+  cache:
+    type: simple
+
+  # ── Mail (optional – won't crash if not configured)
+  mail:
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:noreply@renthub.com}
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+  jackson:
+    default-property-inclusion: non_null
+    serialization:
+      write-dates-as-timestamps: false
+
+# ── JWT
+jwt:
+  secret: ${JWT_SECRET}
+  expiration: 86400000
+  refresh-expiration: 604800000
+
+# ── Storage – set STORAGE_PROVIDER=cloudinary + CLOUDINARY_* vars on Railway
+storage:
+  provider: ${STORAGE_PROVIDER:local}
+  local:
+    upload-dir: /app/uploads
+
+cloudinary:
+  cloud-name: ${CLOUDINARY_CLOUD_NAME:}
+  api-key: ${CLOUDINARY_API_KEY:}
+  api-secret: ${CLOUDINARY_API_SECRET:}
+
+# ── CORS – set ALLOWED_ORIGINS to your Vercel URL on Railway
+cors:
+  allowed-origins: ${ALLOWED_ORIGINS:http://localhost:3000}
+
+# ── Disable Redis auto-config since we use simple cache in prod
+# This prevents "Cannot connect to Redis" errors on startup
+spring.autoconfigure.exclude: >
+  org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration,
+  org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration
+
+# ── Logging
+logging:
+  level:
+    com.renthub: INFO
+    org.springframework.security: WARN
+    org.hibernate: WARN
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+# ── Swagger (keep enabled for API testing)
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html

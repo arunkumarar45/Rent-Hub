@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account - RentHub</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .auth-card {
+            max-width: 480px;
+            margin: var(--space-8) auto;
+            width: 100%;
+        }
+        .strength-meter {
+            height: 4px;
+            background-color: var(--border-color);
+            border-radius: 99px;
+            margin-top: 6px;
+            overflow: hidden;
+            transition: all var(--transition-fast);
+        }
+        .strength-bar {
+            height: 100%;
+            width: 0;
+            transition: width 200ms ease-in-out, background-color 200ms ease-in-out;
+        }
+        .strength-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 4px;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <div id="navbar-mount"></div>
+
+    <main class="container">
+        <div class="card auth-card">
+            <h2 style="font-size: 1.5rem; margin-bottom: var(--space-2); text-align: center; font-family: 'Manrope', sans-serif;">Create Your Account</h2>
+            <p style="text-align: center; margin-bottom: var(--space-6); font-size: 0.875rem;">Rent premium gear or list yours to start earning.</p>
+
+            <div id="signup-error-alert" class="alert alert-danger" style="display: none;"></div>
+
+            <form id="signup-form" novalidate>
+                <!-- Name Row -->
+                <div class="form-row">
+                    <div class="floating-group">
+                        <input type="text" id="firstName" class="form-input" placeholder=" " minlength="2" maxlength="50" required autocomplete="given-name">
+                        <label class="form-label" for="firstName">First Name</label>
+                        <span class="error-msg">Enter first name (min 2 chars).</span>
+                    </div>
+                    <div class="floating-group">
+                        <input type="text" id="lastName" class="form-input" placeholder=" " minlength="2" maxlength="50" required autocomplete="family-name">
+                        <label class="form-label" for="lastName">Last Name</label>
+                        <span class="error-msg">Enter last name (min 2 chars).</span>
+                    </div>
+                </div>
+
+                <!-- Floating Email -->
+                <div class="floating-group">
+                    <input type="email" id="email" class="form-input" placeholder=" " required autocomplete="email">
+                    <label class="form-label" for="email">Email Address</label>
+                    <span class="error-msg">Enter a valid email address.</span>
+                </div>
+
+                <!-- Floating Phone -->
+                <div class="floating-group">
+                    <input type="tel" id="phone" class="form-input" placeholder=" " autocomplete="tel">
+                    <label class="form-label" for="phone">Phone Number (Optional)</label>
+                    <span class="error-msg">Enter a valid phone number format.</span>
+                </div>
+
+                <!-- Floating Password -->
+                <div class="floating-group" style="margin-bottom: var(--space-1);">
+                    <input type="password" id="password" class="form-input" placeholder=" " required autocomplete="new-password">
+                    <label class="form-label" for="password">Password</label>
+                    <span class="error-msg">Password must be at least 8 characters.</span>
+                </div>
+                
+                <!-- Password Strength widget -->
+                <div style="margin-bottom: var(--space-6);">
+                    <div class="strength-meter">
+                        <div id="strength-indicator-bar" class="strength-bar"></div>
+                    </div>
+                    <span id="strength-text" class="strength-label">Strength: Too Short</span>
+                </div>
+
+                <button type="submit" id="signup-submit-btn" class="btn btn-primary" style="width: 100%; margin-bottom: var(--space-4); height: 44px;">
+                    Create Account
+                </button>
+            </form>
+
+            <p style="font-size: 0.875rem; text-align: center; color: var(--text-secondary);">
+                Already have an account? <a href="login.html">Sign in here</a>
+            </p>
+        </div>
+    </main>
+
+    <div id="footer-mount"></div>
+
+    <!-- Core Modular Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/notification.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/modal.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/validation.js"></script>
+    <script src="js/navbar.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.Validation) {
+                Validation.initFloatingLabels();
+            }
+
+            const signupForm = document.getElementById('signup-form');
+            const firstNameInput = document.getElementById('firstName');
+            const lastNameInput = document.getElementById('lastName');
+            const emailInput = document.getElementById('email');
+            const phoneInput = document.getElementById('phone');
+            const passwordInput = document.getElementById('password');
+            const submitBtn = document.getElementById('signup-submit-btn');
+            const errorAlert = document.getElementById('signup-error-alert');
+            const strengthBar = document.getElementById('strength-indicator-bar');
+            const strengthText = document.getElementById('strength-text');
+
+            // Password strength estimator
+            passwordInput.addEventListener('input', () => {
+                const strength = Validation.getPasswordStrength(passwordInput.value);
+                const scorePercentage = (strength.score / 4) * 100;
+                
+                strengthBar.style.width = `${scorePercentage}%`;
+                strengthBar.style.backgroundColor = strength.color;
+                strengthText.textContent = `Strength: ${strength.text}`;
+                strengthText.style.color = strength.color;
+            });
+
+            // Blur validations
+            firstNameInput.addEventListener('blur', () => {
+                const isValid = firstNameInput.value.trim().length >= 2;
+                Validation.setFieldError(firstNameInput, isValid ? '' : 'First name must be at least 2 characters.');
+            });
+
+            lastNameInput.addEventListener('blur', () => {
+                const isValid = lastNameInput.value.trim().length >= 2;
+                Validation.setFieldError(lastNameInput, isValid ? '' : 'Last name must be at least 2 characters.');
+            });
+
+            emailInput.addEventListener('blur', () => {
+                const isValid = Validation.validateEmail(emailInput.value);
+                Validation.setFieldError(emailInput, isValid ? '' : 'Enter a valid email address.');
+            });
+
+            phoneInput.addEventListener('blur', () => {
+                const isValid = Validation.validatePhone(phoneInput.value);
+                Validation.setFieldError(phoneInput, isValid ? '' : 'Invalid phone number format.');
+            });
+
+            passwordInput.addEventListener('blur', () => {
+                const isValid = passwordInput.value.length >= 8;
+                Validation.setFieldError(passwordInput, isValid ? '' : 'Password must be at least 8 characters.');
+            });
+
+            signupForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                errorAlert.style.display = 'none';
+
+                const fnValid = firstNameInput.value.trim().length >= 2;
+                const lnValid = lastNameInput.value.trim().length >= 2;
+                const emailValid = Validation.validateEmail(emailInput.value);
+                const phoneValid = Validation.validatePhone(phoneInput.value);
+                const passValid = passwordInput.value.length >= 8;
+
+                Validation.setFieldError(firstNameInput, fnValid ? '' : 'First name must be at least 2 characters.');
+                Validation.setFieldError(lastNameInput, lnValid ? '' : 'Last name must be at least 2 characters.');
+                Validation.setFieldError(emailInput, emailValid ? '' : 'Enter a valid email address.');
+                Validation.setFieldError(phoneInput, phoneValid ? '' : 'Invalid phone number format.');
+                Validation.setFieldError(passwordInput, passValid ? '' : 'Password must be at least 8 characters.');
+
+                if (!fnValid || !lnValid || !emailValid || !phoneValid || !passValid) return;
+
+                UI.setButtonLoading(submitBtn, true);
+
+                try {
+                    const response = await apiFetch('/auth/register', {
+                        method: 'POST',
+                        body: {
+                            firstName: firstNameInput.value.trim(),
+                            lastName: lastNameInput.value.trim(),
+                            email: emailInput.value.trim(),
+                            phone: phoneInput.value.trim() || null,
+                            password: passwordInput.value
+                        }
+                    });
+
+                    if (response && response.data && response.data.accessToken) {
+                        Auth.login(response.data.accessToken, response.data.refreshToken, response.data.user);
+                        Toast.success("Registration complete! Welcome aboard.", "Account Created");
+                        setTimeout(() => window.location.href = 'dashboard.html', 1000);
+                    } else {
+                        throw new Error("Invalid response format");
+                    }
+                } catch (err) {
+                    UI.setButtonLoading(submitBtn, false, 'Create Account');
+                    
+                    if (err.data && typeof err.data === 'object') {
+                        const details = Object.entries(err.data).map(([k, v]) => `${k}: ${v}`).join('; ');
+                        errorAlert.textContent = `${err.message} (${details})`;
+                    } else {
+                        errorAlert.textContent = err.message || 'Registration failed. Email might be in use.';
+                    }
+                    errorAlert.style.display = 'flex';
+                    Toast.error(errorAlert.textContent);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

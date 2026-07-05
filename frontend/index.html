@@ -1,0 +1,2436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RentHub — Rent Premium Equipment From Verified Local Owners</title>
+    <meta name="description" content="Rent cameras, drones, construction tools, event equipment and more from verified owners near you. Secure payments, damage protection, real-time availability.">
+    <meta property="og:title" content="RentHub — Premium Equipment Rentals">
+    <meta property="og:description" content="Connect with verified gear owners in your area. Rent anything, anytime.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --white: #FFFFFF;
+            --gray-50: #F9FAFB;
+            --gray-100: #F3F4F6;
+            --gray-200: #E5E7EB;
+            --gray-300: #D1D5DB;
+            --gray-400: #9CA3AF;
+            --gray-500: #6B7280;
+            --gray-600: #4B5563;
+            --gray-700: #374151;
+            --gray-900: #111827;
+            --blue-50: #EFF6FF;
+            --blue-100: #DBEAFE;
+            --blue-500: #3B82F6;
+            --blue-600: #2563EB;
+            --blue-700: #1D4ED8;
+            --green-50: #F0FDF4;
+            --green-500: #22C55E;
+            --green-600: #16A34A;
+            --amber-50: #FFFBEB;
+            --amber-500: #F59E0B;
+            --red-50: #FEF2F2;
+            --red-500: #EF4444;
+            --shadow-xs: 0 1px 2px rgba(0,0,0,0.05);
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -1px rgba(0,0,0,0.04);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.08), 0 4px 6px -2px rgba(0,0,0,0.04);
+            --shadow-xl: 0 20px 25px -5px rgba(0,0,0,0.08), 0 10px 10px -5px rgba(0,0,0,0.03);
+            --shadow-2xl: 0 25px 50px -12px rgba(0,0,0,0.12);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 20px;
+            --radius-full: 9999px;
+            --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --max-width: 1280px;
+            --nav-height: 68px;
+            --transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-slow: 400ms cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: var(--font);
+            color: var(--gray-900);
+            background: var(--white);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overflow-x: hidden;
+        }
+
+        a { text-decoration: none; color: inherit; }
+        img { display: block; max-width: 100%; }
+        button { cursor: pointer; font-family: var(--font); border: none; outline: none; }
+
+        .container {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* ============================================================
+           NAVIGATION
+        ============================================================ */
+        #site-nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            height: var(--nav-height);
+            background: rgba(255,255,255,0.92);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid transparent;
+            z-index: 1000;
+            transition: border-color var(--transition), box-shadow var(--transition);
+        }
+        #site-nav.scrolled {
+            border-bottom-color: var(--gray-200);
+            box-shadow: var(--shadow-sm);
+        }
+        .nav-inner {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 0 24px;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            gap: 32px;
+        }
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            font-size: 1.2rem;
+            letter-spacing: -0.02em;
+            color: var(--gray-900);
+            flex-shrink: 0;
+        }
+        .nav-logo-icon {
+            width: 32px; height: 32px;
+            background: var(--blue-600);
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            flex: 1;
+        }
+        .nav-links a {
+            padding: 6px 12px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--gray-600);
+            border-radius: 6px;
+            transition: color var(--transition), background var(--transition);
+        }
+        .nav-links a:hover { color: var(--gray-900); background: var(--gray-100); }
+        .nav-search {
+            flex: 0 0 220px;
+            position: relative;
+        }
+        .nav-search input {
+            width: 100%;
+            height: 36px;
+            background: var(--gray-100);
+            border: 1px solid transparent;
+            border-radius: 8px;
+            padding: 0 12px 0 36px;
+            font-size: 0.875rem;
+            font-family: var(--font);
+            color: var(--gray-900);
+            transition: background var(--transition), border-color var(--transition);
+        }
+        .nav-search input:focus {
+            outline: none;
+            background: var(--white);
+            border-color: var(--blue-500);
+            box-shadow: 0 0 0 3px var(--blue-50);
+        }
+        .nav-search input::placeholder { color: var(--gray-400); }
+        .nav-search-icon {
+            position: absolute;
+            left: 10px; top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray-400);
+            pointer-events: none;
+        }
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+        .nav-icon-btn {
+            width: 36px; height: 36px;
+            border-radius: 8px;
+            background: transparent;
+            border: none;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--gray-500);
+            transition: background var(--transition), color var(--transition);
+            cursor: pointer;
+            position: relative;
+        }
+        .nav-icon-btn:hover { background: var(--gray-100); color: var(--gray-900); }
+        .nav-badge {
+            position: absolute;
+            top: 5px; right: 5px;
+            width: 8px; height: 8px;
+            background: var(--red-500);
+            border-radius: 50%;
+            border: 2px solid var(--white);
+        }
+        .btn-nav-signin {
+            height: 36px;
+            padding: 0 14px;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--gray-700);
+            background: transparent;
+            border: 1px solid var(--gray-200);
+            transition: all var(--transition);
+        }
+        .btn-nav-signin:hover { background: var(--gray-50); border-color: var(--gray-300); }
+        .btn-nav-cta {
+            height: 36px;
+            padding: 0 16px;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--white);
+            background: var(--blue-600);
+            border: none;
+            transition: background var(--transition), transform var(--transition);
+        }
+        .btn-nav-cta:hover { background: var(--blue-700); }
+        .nav-avatar {
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            background: var(--blue-600);
+            color: var(--white);
+            font-weight: 600;
+            font-size: 0.875rem;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+        }
+        .hamburger {
+            display: none;
+            width: 36px; height: 36px;
+            border-radius: 8px;
+            background: transparent;
+            border: 1px solid var(--gray-200);
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            cursor: pointer;
+        }
+        .hamburger span {
+            display: block;
+            width: 18px; height: 2px;
+            background: var(--gray-700);
+            border-radius: 2px;
+            transition: all var(--transition);
+        }
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: var(--nav-height);
+            left: 0; right: 0;
+            background: var(--white);
+            border-bottom: 1px solid var(--gray-200);
+            padding: 16px 24px 24px;
+            box-shadow: var(--shadow-lg);
+            z-index: 999;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .mobile-menu.open { display: flex; }
+        .mobile-menu a {
+            padding: 10px 12px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--gray-700);
+            border-radius: 8px;
+            transition: background var(--transition);
+        }
+        .mobile-menu a:hover { background: var(--gray-100); }
+        .mobile-menu-divider { height: 1px; background: var(--gray-200); margin: 8px 0; }
+        .mobile-menu-actions { display: flex; gap: 8px; margin-top: 8px; }
+
+        /* ============================================================
+           PAGE BODY OFFSET
+        ============================================================ */
+        body { padding-top: var(--nav-height); }
+
+        /* ============================================================
+           HERO SECTION
+        ============================================================ */
+        .hero {
+            padding: 96px 0 80px;
+            background: var(--white);
+            overflow: hidden;
+        }
+        .hero-inner {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 0 24px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            align-items: center;
+        }
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--blue-50);
+            border: 1px solid var(--blue-100);
+            color: var(--blue-600);
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 5px 12px;
+            border-radius: var(--radius-full);
+            margin-bottom: 24px;
+            letter-spacing: 0.01em;
+        }
+        .hero-title {
+            font-size: clamp(2.5rem, 5vw, 3.75rem);
+            font-weight: 800;
+            line-height: 1.1;
+            letter-spacing: -0.03em;
+            color: var(--gray-900);
+            margin-bottom: 20px;
+        }
+        .hero-title span { color: var(--blue-600); }
+        .hero-subtitle {
+            font-size: 1.125rem;
+            color: var(--gray-500);
+            line-height: 1.7;
+            margin-bottom: 32px;
+            max-width: 480px;
+        }
+        .hero-stats {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 36px;
+            padding: 16px 20px;
+            background: var(--gray-50);
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-md);
+        }
+        .hero-stat {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+            color: var(--gray-600);
+            font-weight: 500;
+        }
+        .hero-stat-dot {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: var(--green-500);
+            flex-shrink: 0;
+        }
+        .hero-stat:not(:first-child)::before {
+            content: '';
+            display: block;
+            width: 1px;
+            height: 14px;
+            background: var(--gray-300);
+            flex-shrink: 0;
+        }
+        .hero-buttons {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        .btn-primary-lg {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            height: 50px;
+            padding: 0 24px;
+            background: var(--blue-600);
+            color: var(--white);
+            border-radius: 10px;
+            font-size: 0.9375rem;
+            font-weight: 600;
+            border: none;
+            transition: background var(--transition), transform var(--transition), box-shadow var(--transition);
+            box-shadow: 0 1px 2px rgba(37,99,235,0.2), 0 4px 12px rgba(37,99,235,0.25);
+        }
+        .btn-primary-lg:hover {
+            background: var(--blue-700);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(37,99,235,0.2), 0 8px 20px rgba(37,99,235,0.3);
+        }
+        .btn-secondary-lg {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            height: 50px;
+            padding: 0 24px;
+            background: var(--white);
+            color: var(--gray-700);
+            border-radius: 10px;
+            font-size: 0.9375rem;
+            font-weight: 600;
+            border: 1.5px solid var(--gray-200);
+            transition: all var(--transition);
+        }
+        .btn-secondary-lg:hover {
+            border-color: var(--gray-400);
+            background: var(--gray-50);
+            transform: translateY(-1px);
+        }
+        .hero-trust {
+            font-size: 0.8rem;
+            color: var(--gray-400);
+        }
+        .hero-trust strong { color: var(--gray-600); }
+
+        /* Hero Composition (right side) */
+        .hero-visual {
+            position: relative;
+            height: 520px;
+        }
+        .hero-main-img {
+            position: absolute;
+            top: 0; right: 0;
+            width: 85%;
+            height: 360px;
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            box-shadow: var(--shadow-2xl);
+        }
+        .hero-main-img img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            transition: transform 6s ease;
+        }
+        .hero-main-img:hover img { transform: scale(1.03); }
+
+        /* Floating cards */
+        .float-card {
+            position: absolute;
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-xl);
+            padding: 14px 16px;
+            animation: floatUp 3s ease-in-out infinite alternate;
+        }
+        @keyframes floatUp {
+            from { transform: translateY(0); }
+            to { transform: translateY(-6px); }
+        }
+        .float-card-rating {
+            left: 0; top: 40px;
+            width: 160px;
+            animation-delay: 0s;
+        }
+        .float-card-price {
+            left: 20px; bottom: 100px;
+            width: 175px;
+            animation-delay: 1s;
+        }
+        .float-card-avail {
+            right: 0; bottom: 60px;
+            width: 160px;
+            animation-delay: 0.5s;
+        }
+        .float-card-owner {
+            right: 30px; top: 250px;
+            width: 190px;
+            animation-delay: 1.5s;
+        }
+        .float-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--gray-400);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 4px;
+        }
+        .float-value {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--gray-900);
+        }
+        .float-sub { font-size: 0.75rem; color: var(--gray-500); margin-top: 2px; }
+        .stars-row { color: var(--amber-500); font-size: 0.9rem; letter-spacing: 1px; }
+        .avail-dot {
+            display: inline-block;
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: var(--green-500);
+            margin-right: 5px;
+        }
+        .owner-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .owner-avatar-sm {
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        .owner-avatar-sm img { width: 100%; height: 100%; object-fit: cover; }
+        .verified-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: var(--green-50);
+            color: var(--green-600);
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: var(--radius-full);
+            margin-top: 4px;
+        }
+
+        /* ============================================================
+           TRUST / STATS BAR
+        ============================================================ */
+        .trust-bar {
+            background: var(--gray-50);
+            border-top: 1px solid var(--gray-200);
+            border-bottom: 1px solid var(--gray-200);
+            padding: 56px 0;
+        }
+        .trust-bar-inner {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 0 24px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+        }
+        .trust-stat {
+            text-align: center;
+            opacity: 0;
+            transform: translateY(16px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        .trust-stat.visible { opacity: 1; transform: translateY(0); }
+        .trust-stat-number {
+            font-size: 2.75rem;
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            color: var(--gray-900);
+            line-height: 1;
+            margin-bottom: 8px;
+        }
+        .trust-stat-suffix {
+            color: var(--blue-600);
+        }
+        .trust-stat-label {
+            font-size: 0.9rem;
+            color: var(--gray-500);
+            font-weight: 500;
+        }
+
+        /* ============================================================
+           SECTION TYPOGRAPHY COMMONS
+        ============================================================ */
+        .section-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--blue-600);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 12px;
+        }
+        .section-title {
+            font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            color: var(--gray-900);
+            line-height: 1.15;
+            margin-bottom: 16px;
+        }
+        .section-subtitle {
+            font-size: 1.0625rem;
+            color: var(--gray-500);
+            line-height: 1.65;
+            max-width: 560px;
+        }
+        .section-header { margin-bottom: 56px; }
+        .section-header.centered {
+            text-align: center;
+        }
+        .section-header.centered .section-subtitle { margin: 0 auto; }
+
+        /* ============================================================
+           CATEGORIES
+        ============================================================ */
+        .categories-section {
+            padding: 96px 0;
+        }
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+        .cat-card-v2 {
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            cursor: pointer;
+            transition: all var(--transition);
+            position: relative;
+        }
+        .cat-card-v2:hover {
+            border-color: var(--blue-500);
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-3px);
+        }
+        .cat-card-img {
+            width: 100%;
+            aspect-ratio: 4/3;
+            object-fit: cover;
+            transition: transform var(--transition-slow);
+        }
+        .cat-card-v2:hover .cat-card-img { transform: scale(1.05); }
+        .cat-card-body {
+            padding: 16px;
+        }
+        .cat-card-icon-wrap {
+            width: 40px; height: 40px;
+            background: var(--blue-50);
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--blue-600);
+            margin-bottom: 10px;
+        }
+        .cat-card-title {
+            font-size: 0.9375rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 4px;
+        }
+        .cat-card-count {
+            font-size: 0.8rem;
+            color: var(--gray-400);
+            font-weight: 500;
+        }
+        .cat-card-arrow {
+            position: absolute;
+            top: 14px; right: 14px;
+            width: 28px; height: 28px;
+            background: var(--white);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: var(--shadow-sm);
+            color: var(--gray-500);
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all var(--transition);
+        }
+        .cat-card-v2:hover .cat-card-arrow { opacity: 1; transform: scale(1); }
+
+        /* ============================================================
+           HOW IT WORKS
+        ============================================================ */
+        .how-section {
+            padding: 96px 0;
+            background: var(--gray-50);
+        }
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            position: relative;
+        }
+        .steps-grid::before {
+            content: '';
+            position: absolute;
+            top: 36px;
+            left: calc(12.5% + 20px);
+            right: calc(12.5% + 20px);
+            height: 1px;
+            background: linear-gradient(to right, var(--blue-200), var(--blue-200));
+            border-top: 2px dashed var(--blue-200);
+            z-index: 0;
+        }
+        .step-card {
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-lg);
+            padding: 28px 24px;
+            position: relative;
+            z-index: 1;
+            transition: all var(--transition);
+        }
+        .step-card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-3px);
+            border-color: var(--blue-200);
+        }
+        .step-number {
+            width: 44px; height: 44px;
+            border-radius: 50%;
+            background: var(--blue-600);
+            color: var(--white);
+            font-size: 1rem;
+            font-weight: 800;
+            display: flex; align-items: center; justify-content: center;
+            margin-bottom: 20px;
+        }
+        .step-icon-wrap {
+            width: 44px; height: 44px;
+            border-radius: 12px;
+            background: var(--blue-50);
+            color: var(--blue-600);
+            display: flex; align-items: center; justify-content: center;
+            margin-bottom: 16px;
+        }
+        .step-title {
+            font-size: 1.0625rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 10px;
+        }
+        .step-desc {
+            font-size: 0.875rem;
+            color: var(--gray-500);
+            line-height: 1.6;
+        }
+
+        /* ============================================================
+           FEATURED EQUIPMENT
+        ============================================================ */
+        .featured-section {
+            padding: 96px 0;
+        }
+        .featured-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 40px;
+        }
+        .btn-view-all {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--blue-600);
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: 1.5px solid var(--blue-200);
+            transition: all var(--transition);
+        }
+        .btn-view-all:hover { background: var(--blue-50); border-color: var(--blue-400); }
+        .equip-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+        .equip-card {
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            cursor: pointer;
+            transition: all var(--transition);
+            display: flex;
+            flex-direction: column;
+        }
+        .equip-card:hover {
+            box-shadow: var(--shadow-xl);
+            transform: translateY(-4px);
+            border-color: var(--gray-300);
+        }
+        .equip-img-wrap {
+            position: relative;
+            aspect-ratio: 4/3;
+            overflow: hidden;
+        }
+        .equip-img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            transition: transform var(--transition-slow);
+        }
+        .equip-card:hover .equip-img { transform: scale(1.06); }
+        .equip-wishlist {
+            position: absolute;
+            top: 10px; right: 10px;
+            width: 32px; height: 32px;
+            background: var(--white);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: var(--shadow-md);
+            color: var(--gray-400);
+            cursor: pointer;
+            border: none;
+            transition: all var(--transition);
+        }
+        .equip-wishlist:hover { color: var(--red-500); transform: scale(1.1); }
+        .equip-badge {
+            position: absolute;
+            top: 10px; left: 10px;
+            display: inline-flex; align-items: center; gap: 4px;
+            background: var(--white);
+            color: var(--green-600);
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: var(--radius-full);
+            box-shadow: var(--shadow-sm);
+        }
+        .equip-body { padding: 16px; flex: 1; display: flex; flex-direction: column; }
+        .equip-meta-top {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 8px;
+        }
+        .equip-category {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--blue-600);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+        .equip-rating {
+            display: flex; align-items: center; gap: 4px;
+            font-size: 0.8rem; font-weight: 600; color: var(--gray-700);
+        }
+        .equip-rating svg { color: var(--amber-500); }
+        .equip-title {
+            font-size: 0.9375rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 8px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .equip-location {
+            display: flex; align-items: center; gap: 4px;
+            font-size: 0.8rem; color: var(--gray-400);
+            margin-bottom: 12px;
+        }
+        .equip-owner {
+            display: flex; align-items: center; gap: 8px;
+            padding: 10px 0;
+            border-top: 1px solid var(--gray-100);
+            margin-bottom: 12px;
+        }
+        .equip-owner-img {
+            width: 26px; height: 26px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        .equip-owner-name { font-size: 0.8rem; color: var(--gray-600); font-weight: 500; }
+        .equip-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: auto;
+        }
+        .equip-price {
+            font-size: 1.125rem;
+            font-weight: 800;
+            color: var(--gray-900);
+        }
+        .equip-price-unit { font-size: 0.8rem; font-weight: 400; color: var(--gray-400); }
+        .btn-book-now {
+            height: 34px;
+            padding: 0 14px;
+            background: var(--blue-600);
+            color: var(--white);
+            border-radius: 8px;
+            font-size: 0.8125rem;
+            font-weight: 600;
+            border: none;
+            transition: background var(--transition);
+        }
+        .btn-book-now:hover { background: var(--blue-700); }
+
+        /* skeleton for cards */
+        .skel-card {
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+        }
+        .skel-img { aspect-ratio: 4/3; background: var(--gray-100); animation: pulse 1.5s ease-in-out infinite; }
+        .skel-body { padding: 16px; }
+        .skel-line {
+            height: 12px; border-radius: 6px;
+            background: var(--gray-100);
+            animation: pulse 1.5s ease-in-out infinite;
+            margin-bottom: 10px;
+        }
+        .skel-line.short { width: 60%; }
+        .skel-line.shorter { width: 40%; }
+        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+        /* ============================================================
+           WHY RENTHUB
+        ============================================================ */
+        .why-section {
+            padding: 96px 0;
+            background: var(--gray-50);
+        }
+        .why-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+        .why-card {
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-lg);
+            padding: 28px;
+            transition: all var(--transition);
+        }
+        .why-card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-2px);
+        }
+        .why-icon {
+            width: 48px; height: 48px;
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            margin-bottom: 20px;
+        }
+        .why-title {
+            font-size: 1.0625rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 10px;
+        }
+        .why-desc {
+            font-size: 0.875rem;
+            color: var(--gray-500);
+            line-height: 1.65;
+        }
+
+        /* ============================================================
+           TESTIMONIALS
+        ============================================================ */
+        .testimonials-section { padding: 96px 0; }
+        .testimonials-track-wrap {
+            overflow: hidden;
+            position: relative;
+        }
+        .testimonials-track {
+            display: flex;
+            gap: 20px;
+            transition: transform 500ms cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .testimonial-card {
+            flex: 0 0 calc(33.333% - 14px);
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-lg);
+            padding: 28px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .testimonial-stars { color: var(--amber-500); font-size: 1rem; letter-spacing: 2px; }
+        .testimonial-quote {
+            font-size: 0.9375rem;
+            color: var(--gray-700);
+            line-height: 1.7;
+            font-style: italic;
+            flex: 1;
+        }
+        .testimonial-author {
+            display: flex; align-items: center; gap: 12px;
+            padding-top: 16px;
+            border-top: 1px solid var(--gray-100);
+        }
+        .testimonial-avatar {
+            width: 44px; height: 44px;
+            border-radius: 50%;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+        .testimonial-name { font-size: 0.9rem; font-weight: 700; color: var(--gray-900); }
+        .testimonial-role { font-size: 0.8rem; color: var(--gray-400); }
+        .slider-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            margin-top: 36px;
+        }
+        .slider-btn {
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            background: var(--white);
+            border: 1.5px solid var(--gray-200);
+            display: flex; align-items: center; justify-content: center;
+            color: var(--gray-600);
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+        .slider-btn:hover { border-color: var(--blue-400); color: var(--blue-600); background: var(--blue-50); }
+        .slider-dots {
+            display: flex;
+            gap: 6px;
+        }
+        .slider-dot {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: var(--gray-300);
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+        .slider-dot.active { background: var(--blue-600); width: 18px; border-radius: 3px; }
+
+        /* ============================================================
+           CTA BANNER
+        ============================================================ */
+        .cta-section {
+            padding: 96px 0;
+            background: var(--gray-900);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .cta-bg-pattern {
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(circle at 20% 50%, rgba(37,99,235,0.15) 0%, transparent 50%),
+                              radial-gradient(circle at 80% 50%, rgba(37,99,235,0.1) 0%, transparent 50%);
+        }
+        .cta-inner {
+            position: relative;
+            z-index: 1;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+        .cta-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(37,99,235,0.2);
+            border: 1px solid rgba(37,99,235,0.3);
+            color: #93C5FD;
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            padding: 5px 12px;
+            border-radius: var(--radius-full);
+            margin-bottom: 24px;
+        }
+        .cta-title {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            color: var(--white);
+            line-height: 1.15;
+            margin-bottom: 16px;
+        }
+        .cta-subtitle {
+            font-size: 1.0625rem;
+            color: #9CA3AF;
+            line-height: 1.65;
+            margin-bottom: 36px;
+        }
+        .cta-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            align-items: center;
+        }
+        .btn-cta-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            height: 50px;
+            padding: 0 28px;
+            background: var(--blue-600);
+            color: var(--white);
+            border-radius: 10px;
+            font-size: 0.9375rem;
+            font-weight: 600;
+            border: none;
+            transition: all var(--transition);
+            box-shadow: 0 4px 16px rgba(37,99,235,0.4);
+        }
+        .btn-cta-primary:hover { background: var(--blue-700); transform: translateY(-1px); }
+        .btn-cta-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            height: 50px;
+            padding: 0 24px;
+            background: transparent;
+            color: var(--white);
+            border-radius: 10px;
+            font-size: 0.9375rem;
+            font-weight: 600;
+            border: 1.5px solid rgba(255,255,255,0.25);
+            transition: all var(--transition);
+        }
+        .btn-cta-secondary:hover { border-color: rgba(255,255,255,0.5); background: rgba(255,255,255,0.05); }
+
+        /* ============================================================
+           FAQ
+        ============================================================ */
+        .faq-section {
+            padding: 96px 0;
+        }
+        .faq-list {
+            max-width: 720px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .faq-item {
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+        }
+        .faq-question {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px;
+            background: var(--white);
+            cursor: pointer;
+            font-size: 0.9375rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            text-align: left;
+            border: none;
+            transition: background var(--transition);
+        }
+        .faq-question:hover { background: var(--gray-50); }
+        .faq-icon {
+            width: 24px; height: 24px;
+            border-radius: 50%;
+            background: var(--gray-100);
+            display: flex; align-items: center; justify-content: center;
+            color: var(--gray-500);
+            flex-shrink: 0;
+            transition: background var(--transition), transform var(--transition);
+        }
+        .faq-item.open .faq-icon {
+            background: var(--blue-50);
+            color: var(--blue-600);
+            transform: rotate(45deg);
+        }
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 350ms ease, padding 200ms ease;
+        }
+        .faq-item.open .faq-answer { max-height: 300px; }
+        .faq-answer-inner {
+            padding: 0 24px 20px;
+            font-size: 0.9rem;
+            color: var(--gray-500);
+            line-height: 1.7;
+        }
+        .faq-item.open .faq-question { background: var(--gray-50); }
+
+        /* ============================================================
+           FOOTER
+        ============================================================ */
+        .footer {
+            background: var(--gray-900);
+            padding: 64px 0 32px;
+        }
+        .footer-top {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 0 24px;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+            gap: 48px;
+            padding-bottom: 48px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        .footer-brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--white);
+            margin-bottom: 16px;
+        }
+        .footer-brand-logo-icon {
+            width: 30px; height: 30px;
+            background: var(--blue-600);
+            border-radius: 7px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .footer-tagline {
+            font-size: 0.875rem;
+            color: #6B7280;
+            line-height: 1.65;
+            max-width: 260px;
+            margin-bottom: 24px;
+        }
+        .footer-newsletter {
+            display: flex;
+            gap: 8px;
+        }
+        .footer-newsletter input {
+            flex: 1;
+            height: 38px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 0 12px;
+            font-size: 0.875rem;
+            font-family: var(--font);
+            color: var(--white);
+        }
+        .footer-newsletter input::placeholder { color: #6B7280; }
+        .footer-newsletter input:focus { outline: none; border-color: var(--blue-500); }
+        .footer-newsletter button {
+            height: 38px;
+            padding: 0 14px;
+            background: var(--blue-600);
+            color: var(--white);
+            border-radius: 8px;
+            font-size: 0.8125rem;
+            font-weight: 600;
+            border: none;
+            white-space: nowrap;
+            transition: background var(--transition);
+        }
+        .footer-newsletter button:hover { background: var(--blue-700); }
+        .footer-col-title {
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--white);
+            margin-bottom: 20px;
+        }
+        .footer-links {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .footer-links a {
+            font-size: 0.875rem;
+            color: #6B7280;
+            transition: color var(--transition);
+        }
+        .footer-links a:hover { color: var(--white); }
+        .footer-bottom {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 28px 24px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        .footer-copy {
+            font-size: 0.8125rem;
+            color: #4B5563;
+        }
+        .footer-social {
+            display: flex;
+            gap: 8px;
+        }
+        .social-btn {
+            width: 34px; height: 34px;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.08);
+            display: flex; align-items: center; justify-content: center;
+            color: #6B7280;
+            transition: all var(--transition);
+        }
+        .social-btn:hover { background: rgba(255,255,255,0.12); color: var(--white); }
+
+        /* ============================================================
+           SCROLL ANIMATIONS
+        ============================================================ */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+        .fade-in.visible { opacity: 1; transform: translateY(0); }
+        .fade-in-delay-1 { transition-delay: 0.1s; }
+        .fade-in-delay-2 { transition-delay: 0.2s; }
+        .fade-in-delay-3 { transition-delay: 0.3s; }
+
+        /* ============================================================
+           RESPONSIVE
+        ============================================================ */
+        @media (max-width: 1200px) {
+            .categories-grid { grid-template-columns: repeat(4, 1fr); }
+            .equip-grid { grid-template-columns: repeat(3, 1fr); }
+            .footer-top { grid-template-columns: 2fr 1fr 1fr 1fr; }
+            .footer-top > div:last-child { display: none; }
+        }
+        @media (max-width: 992px) {
+            .hero-inner { grid-template-columns: 1fr; gap: 48px; }
+            .hero-visual { display: none; }
+            .hero-title { font-size: 2.75rem; }
+            .hero { padding: 64px 0 56px; }
+            .trust-bar-inner { grid-template-columns: repeat(2, 1fr); }
+            .categories-grid { grid-template-columns: repeat(3, 1fr); }
+            .steps-grid { grid-template-columns: repeat(2, 1fr); }
+            .steps-grid::before { display: none; }
+            .equip-grid { grid-template-columns: repeat(2, 1fr); }
+            .why-grid { grid-template-columns: repeat(2, 1fr); }
+            .testimonial-card { flex: 0 0 calc(50% - 10px); }
+            .footer-top { grid-template-columns: 1fr 1fr; gap: 32px; }
+            .footer-top > div:last-child { display: none; }
+        }
+        @media (max-width: 768px) {
+            :root { --nav-height: 60px; }
+            .nav-links { display: none; }
+            .nav-search { display: none; }
+            .btn-nav-signin { display: none; }
+            .hamburger { display: flex; }
+            .hero-title { font-size: 2.25rem; }
+            .hero-subtitle { font-size: 1rem; }
+            .hero-stats { flex-direction: column; align-items: flex-start; gap: 10px; }
+            .hero-stat::before { display: none !important; }
+            .hero-buttons { flex-direction: column; align-items: flex-start; }
+            .trust-bar-inner { grid-template-columns: repeat(2, 1fr); gap: 24px; }
+            .categories-grid { grid-template-columns: repeat(2, 1fr); }
+            .steps-grid { grid-template-columns: 1fr; }
+            .equip-grid { grid-template-columns: 1fr; max-width: 360px; margin: 0 auto; }
+            .why-grid { grid-template-columns: 1fr; }
+            .testimonial-card { flex: 0 0 calc(100% - 0px); }
+            .footer-top { grid-template-columns: 1fr; gap: 32px; }
+            .featured-header { flex-direction: column; align-items: flex-start; gap: 16px; }
+            .cta-buttons { flex-direction: column; }
+            .footer-bottom { flex-direction: column; text-align: center; }
+            .section-header { margin-bottom: 36px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ============================================================
+         NAVIGATION
+    ============================================================ -->
+    <nav id="site-nav" role="navigation" aria-label="Main navigation">
+        <div class="nav-inner">
+            <!-- Logo -->
+            <a href="index.html" class="nav-logo" aria-label="RentHub home">
+                <div class="nav-logo-icon" aria-hidden="true">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+                    </svg>
+                </div>
+                RentHub
+            </a>
+
+            <!-- Nav Links -->
+            <div class="nav-links" role="list">
+                <a href="marketplace.html" role="listitem">Marketplace</a>
+                <a href="marketplace.html" role="listitem">Categories</a>
+                <a href="how-it-works.html" role="listitem">How it Works</a>
+                <a href="become-owner.html" role="listitem">Become an Owner</a>
+                <a href="dashboard.html" role="listitem">Dashboard</a>
+            </div>
+
+            <!-- Search -->
+            <div class="nav-search">
+                <svg class="nav-search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input type="text" id="nav-search-input" placeholder="Search gear (e.g. Sony A7)..." aria-label="Search gear" onkeydown="if(event.key==='Enter'){window.location.href='marketplace.html?search='+encodeURIComponent(this.value)}">
+            </div>
+
+            <!-- Actions -->
+            <div class="nav-actions">
+                <!-- Notifications bell -->
+                <button class="nav-icon-btn" id="nav-bell-btn" aria-label="Notifications">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                    <span class="nav-badge" id="notif-badge" style="display:none;"></span>
+                </button>
+
+                <!-- Auth area -->
+                <div id="nav-auth-area">
+                    <button class="btn-nav-signin" onclick="window.location.href='login.html'">Sign In</button>
+                </div>
+                <button class="btn-nav-cta" onclick="window.location.href='become-owner.html'">List Equipment</button>
+
+                <!-- Mobile hamburger -->
+                <button class="hamburger" id="hamburger-btn" aria-label="Open menu" aria-expanded="false">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobile-menu" role="navigation" aria-label="Mobile navigation">
+        <a href="marketplace.html">Marketplace</a>
+        <a href="marketplace.html">Browse Categories</a>
+        <a href="how-it-works.html">How it Works</a>
+        <a href="become-owner.html">Become an Owner</a>
+        <a href="dashboard.html">My Dashboard</a>
+        <div class="mobile-menu-divider"></div>
+        <div class="mobile-menu-actions">
+            <button class="btn-secondary-lg" style="flex:1; height:44px; font-size:0.875rem;" onclick="window.location.href='login.html'">Sign In</button>
+            <button class="btn-primary-lg" style="flex:1; height:44px; font-size:0.875rem;" onclick="window.location.href='become-owner.html'">List Gear</button>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         HERO
+    ============================================================ -->
+    <section class="hero" aria-labelledby="hero-heading">
+        <div class="hero-inner">
+            <!-- LEFT: Text content -->
+            <div class="hero-text">
+                <div class="hero-badge" aria-label="New feature">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                    Trusted by 10,000+ Renters Across the US
+                </div>
+
+                <h1 class="hero-title" id="hero-heading">
+                    Rent Premium Equipment<br>
+                    From <span>Trusted Local</span> Owners
+                </h1>
+
+                <p class="hero-subtitle">
+                    Rent cameras, drones, construction tools, event equipment and more from verified owners near you — at a fraction of the cost to own.
+                </p>
+
+                <!-- Quick trust stats -->
+                <div class="hero-stats" role="list" aria-label="Platform statistics">
+                    <div class="hero-stat" role="listitem">
+                        <span class="hero-stat-dot" aria-hidden="true"></span>
+                        ★★★★★ 4.9 Average Rating
+                    </div>
+                    <div class="hero-stat" role="listitem">10,000+ Rentals</div>
+                    <div class="hero-stat" role="listitem">5,000+ Verified Owners</div>
+                    <div class="hero-stat" role="listitem">100% Secure Payments</div>
+                </div>
+
+                <!-- CTA Buttons -->
+                <div class="hero-buttons">
+                    <a href="marketplace.html" class="btn-primary-lg" role="button">
+                        Explore Marketplace
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                    </a>
+                    <a href="become-owner.html" class="btn-secondary-lg" role="button">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+                        Become an Owner
+                    </a>
+                </div>
+
+                <p class="hero-trust">
+                    <strong>Trusted by</strong> photographers, filmmakers, contractors and event organizers.
+                </p>
+            </div>
+
+            <!-- RIGHT: Visual composition -->
+            <div class="hero-visual" aria-hidden="true">
+                <!-- Main featured image -->
+                <div class="hero-main-img">
+                    <img src="https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=900&q=85"
+                         alt="Professional camera equipment"
+                         loading="eager"
+                         width="900" height="600">
+                </div>
+
+                <!-- Rating floating card -->
+                <div class="float-card float-card-rating">
+                    <div class="float-label">Average Rating</div>
+                    <div class="float-value">4.9 / 5.0</div>
+                    <div class="stars-row">★★★★★</div>
+                    <div class="float-sub">from 2,400+ reviews</div>
+                </div>
+
+                <!-- Price floating card -->
+                <div class="float-card float-card-price">
+                    <div class="float-label">Sony FX6 Cinema Camera</div>
+                    <div class="float-value">$120 <span style="font-size:0.8rem;font-weight:400;color:var(--gray-400)">/day</span></div>
+                    <div class="verified-pill">
+                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                        Verified Owner
+                    </div>
+                </div>
+
+                <!-- Availability card -->
+                <div class="float-card float-card-avail">
+                    <div class="float-label">Availability</div>
+                    <div class="float-value" style="font-size:0.9rem;">
+                        <span class="avail-dot"></span>Available Now
+                    </div>
+                    <div class="float-sub">Jul 6 – Jul 12 open</div>
+                </div>
+
+                <!-- Owner card -->
+                <div class="float-card float-card-owner">
+                    <div class="float-label">Listed by</div>
+                    <div class="owner-row">
+                        <div class="owner-avatar-sm">
+                            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=80&q=80" alt="Owner avatar">
+                        </div>
+                        <div>
+                            <div style="font-size:0.875rem;font-weight:700;color:var(--gray-900);">Marcus T.</div>
+                            <div style="font-size:0.75rem;color:var(--gray-400);">Chicago, IL · 4.8 ★</div>
+                        </div>
+                    </div>
+                    <div class="verified-pill" style="margin-top:8px;">
+                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        ID Verified
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         TRUST STATS BAR
+    ============================================================ -->
+    <section class="trust-bar" aria-label="Platform statistics">
+        <div class="trust-bar-inner">
+            <div class="trust-stat" data-target="10000" data-suffix="K+">
+                <div class="trust-stat-number"><span class="count-up" data-target="10" data-suffix="K+">0</span><span class="trust-stat-suffix">K+</span></div>
+                <div class="trust-stat-label">Successful Rentals</div>
+            </div>
+            <div class="trust-stat" data-delay="1">
+                <div class="trust-stat-number"><span class="count-up" data-target="5" data-suffix="K+">0</span><span class="trust-stat-suffix">K+</span></div>
+                <div class="trust-stat-label">Verified Owners</div>
+            </div>
+            <div class="trust-stat" data-delay="2">
+                <div class="trust-stat-number"><span class="count-up" data-target="4.9" data-suffix="★" data-float="true">0</span><span class="trust-stat-suffix">★</span></div>
+                <div class="trust-stat-label">Customer Rating</div>
+            </div>
+            <div class="trust-stat" data-delay="3">
+                <div class="trust-stat-number"><span class="count-up" data-target="99" data-suffix="">0</span><span class="trust-stat-suffix">%</span></div>
+                <div class="trust-stat-label">Successful Transactions</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         FEATURED CATEGORIES
+    ============================================================ -->
+    <section class="categories-section" aria-labelledby="categories-heading">
+        <div class="container">
+            <div class="section-header centered fade-in">
+                <div class="section-eyebrow">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                    Browse Categories
+                </div>
+                <h2 class="section-title" id="categories-heading">Everything You Need to Rent</h2>
+                <p class="section-subtitle">From professional cinema rigs to heavy construction machinery — find what you need from verified local owners.</p>
+            </div>
+
+            <div class="categories-grid" id="categories-grid">
+                <!-- Categories are rendered below and from API -->
+                <div class="cat-card-v2 fade-in fade-in-delay-1" onclick="window.location.href='marketplace.html?categorySlug=cameras'" tabindex="0" role="button" aria-label="Browse Cameras & Lenses">
+                    <div style="aspect-ratio:4/3;overflow:hidden;">
+                        <img class="cat-card-img" src="https://images.unsplash.com/photo-1502920917128-1aa500764cbd?auto=format&fit=crop&w=400&q=80" alt="Camera equipment" loading="lazy">
+                    </div>
+                    <div class="cat-card-body">
+                        <div class="cat-card-icon-wrap">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                        </div>
+                        <div class="cat-card-title">Cameras & Lenses</div>
+                        <div class="cat-card-count">DSLRs, Mirrorless, Cinema</div>
+                    </div>
+                    <div class="cat-card-arrow" aria-hidden="true">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                    </div>
+                </div>
+
+                <div class="cat-card-v2 fade-in fade-in-delay-2" onclick="window.location.href='marketplace.html?categorySlug=drones'" tabindex="0" role="button" aria-label="Browse Drones">
+                    <div style="aspect-ratio:4/3;overflow:hidden;">
+                        <img class="cat-card-img" src="https://images.unsplash.com/photo-1506947411487-a56738267384?auto=format&fit=crop&w=400&q=80" alt="Drone equipment" loading="lazy">
+                    </div>
+                    <div class="cat-card-body">
+                        <div class="cat-card-icon-wrap">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><circle cx="12" cy="12" r="2"/></svg>
+                        </div>
+                        <div class="cat-card-title">Drones & Aerial</div>
+                        <div class="cat-card-count">DJI, Autel, FPV</div>
+                    </div>
+                    <div class="cat-card-arrow" aria-hidden="true">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                    </div>
+                </div>
+
+                <div class="cat-card-v2 fade-in fade-in-delay-3" onclick="window.location.href='marketplace.html?categorySlug=power-tools'" tabindex="0" role="button" aria-label="Browse Power Tools">
+                    <div style="aspect-ratio:4/3;overflow:hidden;">
+                        <img class="cat-card-img" src="https://images.unsplash.com/photo-1504148455328-c376907d081c?auto=format&fit=crop&w=400&q=80" alt="Power tools" loading="lazy">
+                    </div>
+                    <div class="cat-card-body">
+                        <div class="cat-card-icon-wrap">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+                        </div>
+                        <div class="cat-card-title">Power Tools</div>
+                        <div class="cat-card-count">Drills, Saws, Grinders</div>
+                    </div>
+                    <div class="cat-card-arrow" aria-hidden="true">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                    </div>
+                </div>
+
+                <div class="cat-card-v2 fade-in fade-in-delay-1" onclick="window.location.href='marketplace.html?categorySlug=audio-gear'" tabindex="0" role="button" aria-label="Browse Audio">
+                    <div style="aspect-ratio:4/3;overflow:hidden;">
+                        <img class="cat-card-img" src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=400&q=80" alt="Audio equipment" loading="lazy">
+                    </div>
+                    <div class="cat-card-body">
+                        <div class="cat-card-icon-wrap">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5v14M22 9v6M7 8v8M2 10v4"/></svg>
+                        </div>
+                        <div class="cat-card-title">Audio & Production</div>
+                        <div class="cat-card-count">Mixers, Mics, Speakers</div>
+                    </div>
+                    <div class="cat-card-arrow" aria-hidden="true">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                    </div>
+                </div>
+
+                <div class="cat-card-v2 fade-in fade-in-delay-2" onclick="window.location.href='marketplace.html?categorySlug=lighting'" tabindex="0" role="button" aria-label="Browse Lighting">
+                    <div style="aspect-ratio:4/3;overflow:hidden;">
+                        <img class="cat-card-img" src="https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?auto=format&fit=crop&w=400&q=80" alt="Studio lighting" loading="lazy">
+                    </div>
+                    <div class="cat-card-body">
+                        <div class="cat-card-icon-wrap">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                        </div>
+                        <div class="cat-card-title">Studio Lighting</div>
+                        <div class="cat-card-count">Strobes, LED, Softboxes</div>
+                    </div>
+                    <div class="cat-card-arrow" aria-hidden="true">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                    </div>
+                </div>
+
+                <div class="cat-card-v2 fade-in fade-in-delay-3" onclick="window.location.href='marketplace.html?categorySlug=construction'" tabindex="0" role="button" aria-label="Browse Construction">
+                    <div style="aspect-ratio:4/3;overflow:hidden;">
+                        <img class="cat-card-img" src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=400&q=80" alt="Construction equipment" loading="lazy">
+                    </div>
+                    <div class="cat-card-body">
+                        <div class="cat-card-icon-wrap">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
+                        </div>
+                        <div class="cat-card-title">Construction</div>
+                        <div class="cat-card-count">Heavy Equipment, Excavators</div>
+                    </div>
+                    <div class="cat-card-arrow" aria-hidden="true">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                    </div>
+                </div>
+
+                <div class="cat-card-v2 fade-in fade-in-delay-1" onclick="window.location.href='marketplace.html?categorySlug=camping'" tabindex="0" role="button" aria-label="Browse Camping">
+                    <div style="aspect-ratio:4/3;overflow:hidden;">
+                        <img class="cat-card-img" src="https://images.unsplash.com/photo-1478131143081-80f7f84ca84d?auto=format&fit=crop&w=400&q=80" alt="Camping equipment" loading="lazy">
+                    </div>
+                    <div class="cat-card-body">
+                        <div class="cat-card-icon-wrap">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                        </div>
+                        <div class="cat-card-title">Camping & Outdoor</div>
+                        <div class="cat-card-count">Tents, Gear, Climbing</div>
+                    </div>
+                    <div class="cat-card-arrow" aria-hidden="true">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                    </div>
+                </div>
+
+                <div class="cat-card-v2 fade-in fade-in-delay-2" onclick="window.location.href='marketplace.html?categorySlug=events'" tabindex="0" role="button" aria-label="Browse Events">
+                    <div style="aspect-ratio:4/3;overflow:hidden;">
+                        <img class="cat-card-img" src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=400&q=80" alt="Event equipment" loading="lazy">
+                    </div>
+                    <div class="cat-card-body">
+                        <div class="cat-card-icon-wrap">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                        </div>
+                        <div class="cat-card-title">Events & Production</div>
+                        <div class="cat-card-count">Stages, Tents, AV</div>
+                    </div>
+                    <div class="cat-card-arrow" aria-hidden="true">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         HOW IT WORKS
+    ============================================================ -->
+    <section class="how-section" aria-labelledby="how-heading">
+        <div class="container">
+            <div class="section-header centered fade-in">
+                <div class="section-eyebrow">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    Simple Process
+                </div>
+                <h2 class="section-title" id="how-heading">Rent Anything in 4 Easy Steps</h2>
+                <p class="section-subtitle">From browsing to booking, RentHub makes equipment rental fast, secure and conflict-free.</p>
+            </div>
+
+            <div class="steps-grid">
+                <div class="step-card fade-in fade-in-delay-1">
+                    <div class="step-number">1</div>
+                    <div class="step-icon-wrap">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    </div>
+                    <div class="step-title">Browse Equipment</div>
+                    <p class="step-desc">Search and filter hundreds of verified listings by category, location, price and availability.</p>
+                </div>
+                <div class="step-card fade-in fade-in-delay-2">
+                    <div class="step-number">2</div>
+                    <div class="step-icon-wrap">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                    </div>
+                    <div class="step-title">Book Securely</div>
+                    <p class="step-desc">Select your rental dates, apply coupon codes, and confirm your booking with secure checkout.</p>
+                </div>
+                <div class="step-card fade-in fade-in-delay-3">
+                    <div class="step-number">3</div>
+                    <div class="step-icon-wrap">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </div>
+                    <div class="step-title">Pickup or Delivery</div>
+                    <p class="step-desc">Coordinate pickup directly with the owner once your booking is approved and confirmed.</p>
+                </div>
+                <div class="step-card fade-in fade-in-delay-1">
+                    <div class="step-number">4</div>
+                    <div class="step-icon-wrap">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    </div>
+                    <div class="step-title">Return &amp; Review</div>
+                    <p class="step-desc">Return equipment on time, receive your security deposit back, and leave a verified review.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         FEATURED EQUIPMENT (dynamic + skeleton)
+    ============================================================ -->
+    <section class="featured-section" aria-labelledby="featured-heading">
+        <div class="container">
+            <div class="featured-header fade-in">
+                <div>
+                    <div class="section-eyebrow">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        Recently Listed
+                    </div>
+                    <h2 class="section-title" id="featured-heading">Popular Gear Near You</h2>
+                </div>
+                <a href="marketplace.html" class="btn-view-all" aria-label="Browse all listings">
+                    View All Listings
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </a>
+            </div>
+
+            <!-- Skeleton placeholders -->
+            <div id="equip-skeleton" class="equip-grid" aria-busy="true" aria-label="Loading equipment">
+                <div class="skel-card"><div class="skel-img"></div><div class="skel-body"><div class="skel-line short"></div><div class="skel-line"></div><div class="skel-line shorter"></div></div></div>
+                <div class="skel-card"><div class="skel-img"></div><div class="skel-body"><div class="skel-line short"></div><div class="skel-line"></div><div class="skel-line shorter"></div></div></div>
+                <div class="skel-card"><div class="skel-img"></div><div class="skel-body"><div class="skel-line short"></div><div class="skel-line"></div><div class="skel-line shorter"></div></div></div>
+                <div class="skel-card"><div class="skel-img"></div><div class="skel-body"><div class="skel-line short"></div><div class="skel-line"></div><div class="skel-line shorter"></div></div></div>
+            </div>
+
+            <!-- Dynamic grid -->
+            <div id="equip-grid" class="equip-grid" style="display:none;" aria-live="polite"></div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         WHY RENTHUB
+    ============================================================ -->
+    <section class="why-section" aria-labelledby="why-heading">
+        <div class="container">
+            <div class="section-header centered fade-in">
+                <div class="section-eyebrow">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    Why RentHub
+                </div>
+                <h2 class="section-title" id="why-heading">Built for Trust, Speed and Security</h2>
+                <p class="section-subtitle">Every feature is designed to protect you and make renting as seamless as possible.</p>
+            </div>
+
+            <div class="why-grid">
+                <div class="why-card fade-in fade-in-delay-1">
+                    <div class="why-icon" style="background:var(--blue-50);color:var(--blue-600);">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                    </div>
+                    <div class="why-title">Secure Payments</div>
+                    <p class="why-desc">All transactions are encrypted and funds are held securely until the rental is confirmed by both parties.</p>
+                </div>
+                <div class="why-card fade-in fade-in-delay-2">
+                    <div class="why-icon" style="background:var(--green-50);color:var(--green-600);">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    </div>
+                    <div class="why-title">Verified Owners</div>
+                    <p class="why-desc">Every owner is identity-verified before listing equipment. See their rating, history and reviews upfront.</p>
+                </div>
+                <div class="why-card fade-in fade-in-delay-3">
+                    <div class="why-icon" style="background:var(--amber-50);color:var(--amber-500);">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><circle cx="12" cy="12" r="3"/></svg>
+                    </div>
+                    <div class="why-title">Damage Protection</div>
+                    <p class="why-desc">Refundable security deposits protect owners while renters get peace of mind during their rental period.</p>
+                </div>
+                <div class="why-card fade-in fade-in-delay-1">
+                    <div class="why-icon" style="background:var(--blue-50);color:var(--blue-600);">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    </div>
+                    <div class="why-title">Real-time Availability</div>
+                    <p class="why-desc">Live availability calendars prevent double-bookings and show you exactly when equipment is free.</p>
+                </div>
+                <div class="why-card fade-in fade-in-delay-2">
+                    <div class="why-icon" style="background:var(--green-50);color:var(--green-600);">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                    </div>
+                    <div class="why-title">Fast Booking</div>
+                    <p class="why-desc">Instant price calculations, promo code validation and one-click checkout make booking lightning fast.</p>
+                </div>
+                <div class="why-card fade-in fade-in-delay-3">
+                    <div class="why-icon" style="background:var(--red-50);color:var(--red-500);">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                    </div>
+                    <div class="why-title">24/7 Support</div>
+                    <p class="why-desc">Our support team is always available to resolve disputes, help with cancellations, and answer questions.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         TESTIMONIALS
+    ============================================================ -->
+    <section class="testimonials-section" aria-labelledby="testimonials-heading">
+        <div class="container">
+            <div class="section-header centered fade-in">
+                <div class="section-eyebrow">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                    What Users Say
+                </div>
+                <h2 class="section-title" id="testimonials-heading">Loved by Renters & Owners Alike</h2>
+                <p class="section-subtitle">Real reviews from real people using RentHub every week.</p>
+            </div>
+
+            <div class="testimonials-track-wrap">
+                <div class="testimonials-track" id="testimonials-track">
+                    <article class="testimonial-card" aria-label="Review from Sarah Chen">
+                        <div class="testimonial-stars" aria-label="5 out of 5 stars">★★★★★</div>
+                        <blockquote class="testimonial-quote">
+                            "I rented a Sony FX6 for a weekend shoot and the whole process was flawless. Pickup was smooth, the gear was in perfect condition, and I got my deposit back within hours. Will definitely use RentHub again!"
+                        </blockquote>
+                        <div class="testimonial-author">
+                            <img class="testimonial-avatar"
+                                 src="https://images.unsplash.com/photo-1494790108755-2616b9e8c5d1?auto=format&fit=crop&w=80&q=80"
+                                 alt="Sarah Chen" loading="lazy">
+                            <div>
+                                <div class="testimonial-name">Sarah Chen</div>
+                                <div class="testimonial-role">Freelance Filmmaker, Los Angeles</div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="testimonial-card" aria-label="Review from Marcus T.">
+                        <div class="testimonial-stars" aria-label="5 out of 5 stars">★★★★★</div>
+                        <blockquote class="testimonial-quote">
+                            "As an owner, I've earned over $3,400 renting my camera gear through RentHub. The platform handles everything — payments, contracts, availability. It's hands-off passive income."
+                        </blockquote>
+                        <div class="testimonial-author">
+                            <img class="testimonial-avatar"
+                                 src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=80&q=80"
+                                 alt="Marcus Thompson" loading="lazy">
+                            <div>
+                                <div class="testimonial-name">Marcus Thompson</div>
+                                <div class="testimonial-role">Equipment Owner, Chicago</div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="testimonial-card" aria-label="Review from Priya Rajan">
+                        <div class="testimonial-stars" aria-label="5 out of 5 stars">★★★★★</div>
+                        <blockquote class="testimonial-quote">
+                            "Rented an excavator for a landscaping project. The booking process was incredibly straightforward and the owner was responsive. Saved us thousands compared to buying."
+                        </blockquote>
+                        <div class="testimonial-author">
+                            <img class="testimonial-avatar"
+                                 src="https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&w=80&q=80"
+                                 alt="Priya Rajan" loading="lazy">
+                            <div>
+                                <div class="testimonial-name">Priya Rajan</div>
+                                <div class="testimonial-role">Contractor, Austin TX</div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="testimonial-card" aria-label="Review from David Park">
+                        <div class="testimonial-stars" aria-label="5 out of 5 stars">★★★★★</div>
+                        <blockquote class="testimonial-quote">
+                            "Perfect for event production. We rented 8 different items from 3 different owners for a music festival and everything went seamlessly. The coupon system saved us 15%."
+                        </blockquote>
+                        <div class="testimonial-author">
+                            <img class="testimonial-avatar"
+                                 src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=80&q=80"
+                                 alt="David Park" loading="lazy">
+                            <div>
+                                <div class="testimonial-name">David Park</div>
+                                <div class="testimonial-role">Event Producer, New York</div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="testimonial-card" aria-label="Review from Amanda Lee">
+                        <div class="testimonial-stars" aria-label="4 out of 5 stars">★★★★★</div>
+                        <blockquote class="testimonial-quote">
+                            "I'm a drone photographer and RentHub has connected me with amazing local owners. The verified badge system genuinely builds trust. I know I'm renting from real, responsible people."
+                        </blockquote>
+                        <div class="testimonial-author">
+                            <img class="testimonial-avatar"
+                                 src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=80&q=80"
+                                 alt="Amanda Lee" loading="lazy">
+                            <div>
+                                <div class="testimonial-name">Amanda Lee</div>
+                                <div class="testimonial-role">Aerial Photographer, Seattle</div>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </div>
+
+            <div class="slider-controls" role="group" aria-label="Testimonial navigation">
+                <button class="slider-btn" id="slider-prev" aria-label="Previous testimonials">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+                </button>
+                <div class="slider-dots" id="slider-dots" role="tablist" aria-label="Testimonial pages">
+                    <button class="slider-dot active" role="tab" aria-selected="true" aria-label="Page 1"></button>
+                    <button class="slider-dot" role="tab" aria-selected="false" aria-label="Page 2"></button>
+                    <button class="slider-dot" role="tab" aria-selected="false" aria-label="Page 3"></button>
+                </div>
+                <button class="slider-btn" id="slider-next" aria-label="Next testimonials">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         CTA BANNER
+    ============================================================ -->
+    <section class="cta-section" aria-labelledby="cta-heading">
+        <div class="cta-bg-pattern" aria-hidden="true"></div>
+        <div class="cta-inner">
+            <div class="cta-eyebrow">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                Get Started Today
+            </div>
+            <h2 class="cta-title" id="cta-heading">Ready to Start Renting?</h2>
+            <p class="cta-subtitle">Join thousands of renters and owners building a smarter, more sustainable way to access equipment.</p>
+            <div class="cta-buttons">
+                <a href="marketplace.html" class="btn-cta-primary">
+                    Explore Marketplace
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </a>
+                <a href="become-owner.html" class="btn-cta-secondary">
+                    List Your Equipment
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         FAQ
+    ============================================================ -->
+    <section class="faq-section" aria-labelledby="faq-heading">
+        <div class="container">
+            <div class="section-header centered fade-in">
+                <div class="section-eyebrow">FAQ</div>
+                <h2 class="section-title" id="faq-heading">Frequently Asked Questions</h2>
+                <p class="section-subtitle">Everything you need to know about renting and listing on RentHub.</p>
+            </div>
+
+            <div class="faq-list" role="list">
+                <div class="faq-item" role="listitem">
+                    <button class="faq-question" aria-expanded="false">
+                        How does RentHub verify equipment owners?
+                        <div class="faq-icon" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+                    </button>
+                    <div class="faq-answer"><div class="faq-answer-inner">All owners go through an identity verification process before their listings go live. This includes government ID verification, profile review, and an initial quality check on their listed equipment descriptions.</div></div>
+                </div>
+
+                <div class="faq-item" role="listitem">
+                    <button class="faq-question" aria-expanded="false">
+                        What happens if the equipment is damaged during my rental?
+                        <div class="faq-icon" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+                    </button>
+                    <div class="faq-answer"><div class="faq-answer-inner">A refundable security deposit is collected at booking time. In the event of damage, the owner can submit a damage claim and our support team will review evidence from both parties to determine a fair resolution. Standard wear and tear is never charged.</div></div>
+                </div>
+
+                <div class="faq-item" role="listitem">
+                    <button class="faq-question" aria-expanded="false">
+                        Can I cancel a booking after it's confirmed?
+                        <div class="faq-icon" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+                    </button>
+                    <div class="faq-answer"><div class="faq-answer-inner">Yes. You can cancel a booking from your dashboard before the rental start date. Cancellation policy varies by owner — some offer full refunds, others have partial refund windows. Always check the listing's cancellation terms before booking.</div></div>
+                </div>
+
+                <div class="faq-item" role="listitem">
+                    <button class="faq-question" aria-expanded="false">
+                        How do I become an equipment owner on RentHub?
+                        <div class="faq-icon" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+                    </button>
+                    <div class="faq-answer"><div class="faq-answer-inner">Simply click "Become an Owner" or "List Equipment," complete a short verification, and create your first listing. It takes under 10 minutes. Once approved, your gear is live and visible to thousands of local renters immediately.</div></div>
+                </div>
+
+                <div class="faq-item" role="listitem">
+                    <button class="faq-question" aria-expanded="false">
+                        Does RentHub charge listing or commission fees?
+                        <div class="faq-icon" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+                    </button>
+                    <div class="faq-answer"><div class="faq-answer-inner">Listing your equipment is completely free. RentHub takes a small service fee only when a rental is successfully completed. There are no upfront costs or monthly subscription fees for owners or renters.</div></div>
+                </div>
+
+                <div class="faq-item" role="listitem">
+                    <button class="faq-question" aria-expanded="false">
+                        Are coupon and promo codes available?
+                        <div class="faq-icon" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+                    </button>
+                    <div class="faq-answer"><div class="faq-answer-inner">Yes. RentHub regularly issues promo codes that provide percentage or fixed-amount discounts on bookings above a minimum value. Codes can be applied during checkout and validated in real-time before payment is confirmed.</div></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         FOOTER
+    ============================================================ -->
+    <footer class="footer" role="contentinfo">
+        <div class="footer-top">
+            <div>
+                <div class="footer-brand-logo">
+                    <div class="footer-brand-logo-icon" aria-hidden="true">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                    </div>
+                    RentHub
+                </div>
+                <p class="footer-tagline">The trusted peer-to-peer marketplace for renting premium equipment from verified local owners.</p>
+                <div class="footer-newsletter" role="form" aria-label="Newsletter signup">
+                    <input type="email" placeholder="Enter your email..." aria-label="Email for newsletter">
+                    <button type="button">Subscribe</button>
+                </div>
+            </div>
+
+            <div>
+                <div class="footer-col-title">Marketplace</div>
+                <ul class="footer-links">
+                    <li><a href="marketplace.html">Browse All Gear</a></li>
+                    <li><a href="marketplace.html?categorySlug=cameras">Cameras</a></li>
+                    <li><a href="marketplace.html?categorySlug=drones">Drones</a></li>
+                    <li><a href="marketplace.html?categorySlug=power-tools">Power Tools</a></li>
+                    <li><a href="marketplace.html?categorySlug=audio-gear">Audio</a></li>
+                    <li><a href="marketplace.html?categorySlug=events">Events</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <div class="footer-col-title">Company</div>
+                <ul class="footer-links">
+                    <li><a href="how-it-works.html">How it Works</a></li>
+                    <li><a href="become-owner.html">Become an Owner</a></li>
+                    <li><a href="#">About RentHub</a></li>
+                    <li><a href="#">Careers</a></li>
+                    <li><a href="#">Press</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <div class="footer-col-title">Support</div>
+                <ul class="footer-links">
+                    <li><a href="#">Help Center</a></li>
+                    <li><a href="#">Contact Us</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                    <li><a href="#">Cookie Policy</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <div class="footer-col-title">Contact</div>
+                <ul class="footer-links">
+                    <li><a href="mailto:support@renthub.com">support@renthub.com</a></li>
+                    <li><a href="tel:+18005550199">1-800-555-0199</a></li>
+                    <li style="color:#4B5563;font-size:0.875rem;margin-top:4px;">Mon–Fri, 9am–6pm EST</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p class="footer-copy">© 2026 RentHub Inc. All rights reserved. Built for professionals.</p>
+            <div class="footer-social" role="list" aria-label="Social media links">
+                <a href="#" class="social-btn" aria-label="Twitter / X" role="listitem">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                </a>
+                <a href="#" class="social-btn" aria-label="LinkedIn" role="listitem">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>
+                </a>
+                <a href="#" class="social-btn" aria-label="Instagram" role="listitem">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+                </a>
+                <a href="#" class="social-btn" aria-label="YouTube" role="listitem">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 0 0-1.95 1.96A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58A2.78 2.78 0 0 0 3.41 19.6C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.95A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="white"/></svg>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ============================================================
+         SCRIPTS
+    ============================================================ -->
+    <script src="js/config.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/notification.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/modal.js"></script>
+    <script src="js/ui.js"></script>
+
+    <script>
+    (function() {
+        'use strict';
+
+        // ---- NAV: scroll shadow ----
+        const nav = document.getElementById('site-nav');
+        window.addEventListener('scroll', () => {
+            nav.classList.toggle('scrolled', window.scrollY > 10);
+        }, { passive: true });
+
+        // ---- NAV: hamburger ----
+        const hamburger = document.getElementById('hamburger-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        hamburger.addEventListener('click', () => {
+            const isOpen = mobileMenu.classList.toggle('open');
+            hamburger.setAttribute('aria-expanded', isOpen);
+        });
+        document.addEventListener('click', (e) => {
+            if (!nav.contains(e.target) && !mobileMenu.contains(e.target)) {
+                mobileMenu.classList.remove('open');
+                hamburger.setAttribute('aria-expanded', 'false');
+            }
+        });
+
+        // ---- NAV: Auth state ----
+        function updateNavAuth() {
+            const authArea = document.getElementById('nav-auth-area');
+            if (!authArea) return;
+            try {
+                const token = localStorage.getItem('auth_token');
+                const userStr = localStorage.getItem('user_profile') || localStorage.getItem('auth_user');
+                if (token && userStr) {
+                    const user = JSON.parse(userStr);
+                    const initials = ((user.firstName || 'U')[0] + (user.lastName || '')[0]).toUpperCase();
+                    authArea.innerHTML = `
+                        <div style="position:relative;display:inline-block;">
+                            <button onclick="toggleProfileMenu()" class="nav-avatar" aria-label="Profile menu" aria-haspopup="true">${initials}</button>
+                            <div id="profile-dd" style="display:none;position:absolute;right:0;top:calc(100% + 8px);background:#fff;border:1px solid #E5E7EB;border-radius:12px;box-shadow:0 20px 25px -5px rgba(0,0,0,0.1);width:200px;padding:8px;z-index:200;">
+                                <a href="dashboard.html" style="display:block;padding:8px 12px;border-radius:8px;font-size:0.875rem;color:#374151;font-weight:500;" onmouseover="this.style.background='#F9FAFB'" onmouseout="this.style.background='transparent'">Dashboard</a>
+                                <a href="become-owner.html" style="display:block;padding:8px 12px;border-radius:8px;font-size:0.875rem;color:#374151;font-weight:500;" onmouseover="this.style.background='#F9FAFB'" onmouseout="this.style.background='transparent'">List Equipment</a>
+                                <div style="height:1px;background:#F3F4F6;margin:6px 0;"></div>
+                                <button onclick="signOut()" style="width:100%;display:block;padding:8px 12px;border-radius:8px;font-size:0.875rem;color:#EF4444;font-weight:500;text-align:left;background:transparent;border:none;cursor:pointer;" onmouseover="this.style.background='#FEF2F2'" onmouseout="this.style.background='transparent'">Sign Out</button>
+                            </div>
+                        </div>
+                    `;
+                }
+            } catch(e) {}
+        }
+        window.toggleProfileMenu = function() {
+            const dd = document.getElementById('profile-dd');
+            if (dd) dd.style.display = dd.style.display === 'none' ? 'block' : 'none';
+        };
+        window.signOut = function() {
+            localStorage.clear();
+            window.location.reload();
+        };
+        updateNavAuth();
+
+        // ---- SCROLL ANIMATIONS: Intersection Observer ----
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+        // ---- TRUST STAT COUNTER ----
+        const trustStats = document.querySelectorAll('.trust-stat');
+        const counters = document.querySelectorAll('.count-up');
+        let counted = false;
+
+        const counterObserver = new IntersectionObserver((entries) => {
+            if (entries[0].isIntersecting && !counted) {
+                counted = true;
+                trustStats.forEach((s, i) => {
+                    setTimeout(() => s.classList.add('visible'), i * 120);
+                });
+                counters.forEach(counter => {
+                    const target = parseFloat(counter.dataset.target);
+                    const isFloat = counter.dataset.float === 'true';
+                    const duration = 1600;
+                    const start = performance.now();
+                    function update(now) {
+                        const progress = Math.min((now - start) / duration, 1);
+                        const eased = 1 - Math.pow(1 - progress, 3);
+                        const value = target * eased;
+                        counter.textContent = isFloat ? value.toFixed(1) : Math.round(value);
+                        if (progress < 1) requestAnimationFrame(update);
+                    }
+                    requestAnimationFrame(update);
+                });
+            }
+        }, { threshold: 0.5 });
+
+        const trustBar = document.querySelector('.trust-bar');
+        if (trustBar) counterObserver.observe(trustBar);
+
+        // ---- TESTIMONIALS SLIDER ----
+        const track = document.getElementById('testimonials-track');
+        const dots = document.querySelectorAll('.slider-dot');
+        let currentSlide = 0;
+        const totalSlides = 3;
+        let slideWidth = 0;
+        let cardsPerView = 3;
+
+        function getCardsPerView() {
+            if (window.innerWidth <= 768) return 1;
+            if (window.innerWidth <= 992) return 2;
+            return 3;
+        }
+
+        function updateSlider() {
+            cardsPerView = getCardsPerView();
+            const cards = track.querySelectorAll('.testimonial-card');
+            if (!cards.length) return;
+            slideWidth = cards[0].getBoundingClientRect().width + 20;
+            const maxSlide = Math.max(0, cards.length - cardsPerView);
+            currentSlide = Math.min(currentSlide, maxSlide);
+            track.style.transform = `translateX(-${currentSlide * slideWidth}px)`;
+            dots.forEach((d, i) => {
+                d.classList.toggle('active', i === currentSlide);
+                d.setAttribute('aria-selected', i === currentSlide);
+            });
+        }
+
+        document.getElementById('slider-next').addEventListener('click', () => {
+            const maxSlide = track.querySelectorAll('.testimonial-card').length - cardsPerView;
+            currentSlide = currentSlide >= maxSlide ? 0 : currentSlide + 1;
+            updateSlider();
+        });
+        document.getElementById('slider-prev').addEventListener('click', () => {
+            const maxSlide = track.querySelectorAll('.testimonial-card').length - cardsPerView;
+            currentSlide = currentSlide <= 0 ? maxSlide : currentSlide - 1;
+            updateSlider();
+        });
+        dots.forEach((dot, i) => {
+            dot.addEventListener('click', () => { currentSlide = i; updateSlider(); });
+        });
+
+        let autoSlide = setInterval(() => {
+            const maxSlide = track.querySelectorAll('.testimonial-card').length - cardsPerView;
+            currentSlide = currentSlide >= maxSlide ? 0 : currentSlide + 1;
+            updateSlider();
+        }, 5000);
+        track.parentElement.addEventListener('mouseenter', () => clearInterval(autoSlide));
+        track.parentElement.addEventListener('mouseleave', () => {
+            autoSlide = setInterval(() => {
+                const maxSlide = track.querySelectorAll('.testimonial-card').length - cardsPerView;
+                currentSlide = currentSlide >= maxSlide ? 0 : currentSlide + 1;
+                updateSlider();
+            }, 5000);
+        });
+        window.addEventListener('resize', updateSlider, { passive: true });
+        setTimeout(updateSlider, 100);
+
+        // ---- FAQ ACCORDION ----
+        document.querySelectorAll('.faq-question').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const item = btn.parentElement;
+                const isOpen = item.classList.contains('open');
+                // Close all
+                document.querySelectorAll('.faq-item').forEach(i => {
+                    i.classList.remove('open');
+                    i.querySelector('.faq-question').setAttribute('aria-expanded', 'false');
+                });
+                // Toggle clicked
+                if (!isOpen) {
+                    item.classList.add('open');
+                    btn.setAttribute('aria-expanded', 'true');
+                }
+            });
+        });
+
+        // ---- KEYBOARD: category card enter ----
+        document.querySelectorAll('.cat-card-v2[tabindex]').forEach(card => {
+            card.addEventListener('keydown', e => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    card.click();
+                }
+            });
+        });
+
+        // ---- LOAD EQUIPMENT from API ----
+        async function loadFeaturedEquipment() {
+            const skeleton = document.getElementById('equip-skeleton');
+            const grid = document.getElementById('equip-grid');
+
+            try {
+                const res = await apiFetch('/equipment/popular');
+                skeleton.style.display = 'none';
+
+                if (res && res.data && res.data.length > 0) {
+                    const items = res.data.slice(0, 8);
+                    grid.innerHTML = '';
+
+                    items.forEach(item => {
+                        const fallback = 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=500&q=80';
+                        const imgSrc = item.imageUrl || fallback;
+                        const price = typeof Utils !== 'undefined' ? Utils.formatCurrency(item.dailyRate) : `$${(item.dailyRate/100).toFixed(2)}`;
+                        const title = typeof Utils !== 'undefined' ? Utils.sanitize(item.title) : item.title;
+                        const cat = typeof Utils !== 'undefined' ? Utils.sanitize(item.categoryName || 'Equipment') : (item.categoryName || 'Equipment');
+
+                        const card = document.createElement('article');
+                        card.className = 'equip-card fade-in';
+                        card.setAttribute('aria-label', `${title} — ${price} per day`);
+                        card.innerHTML = `
+                            <div class="equip-img-wrap">
+                                <img class="equip-img" src="${imgSrc}" alt="${title}" loading="lazy">
+                                <button class="equip-wishlist" aria-label="Add to wishlist" onclick="event.stopPropagation()">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+                                </button>
+                                <div class="equip-badge">
+                                    <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                                    Verified
+                                </div>
+                            </div>
+                            <div class="equip-body">
+                                <div class="equip-meta-top">
+                                    <div class="equip-category">${cat}</div>
+                                    <div class="equip-rating">
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                                        4.8
+                                    </div>
+                                </div>
+                                <div class="equip-title">${title}</div>
+                                <div class="equip-location">
+                                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                                    ${item.location || 'Local Area'}
+                                </div>
+                                <div class="equip-footer">
+                                    <div>
+                                        <span class="equip-price">${price}</span>
+                                        <span class="equip-price-unit">/day</span>
+                                    </div>
+                                    <button class="btn-book-now" onclick="window.location.href='equipment.html?id=${item.id}'">View Details</button>
+                                </div>
+                            </div>
+                        `;
+                        card.addEventListener('click', (e) => {
+                            if (!e.target.closest('.equip-wishlist') && !e.target.closest('.btn-book-now')) {
+                                window.location.href = `equipment.html?id=${item.id}`;
+                            }
+                        });
+                        grid.appendChild(card);
+                        // Trigger animation
+                        setTimeout(() => observer.observe(card), 0);
+                    });
+
+                    grid.style.display = 'grid';
+                } else {
+                    // Show fallback static cards
+                    showStaticCards(skeleton, grid);
+                }
+            } catch (err) {
+                console.error('Failed to load equipment:', err);
+                showStaticCards(skeleton, grid);
+            }
+        }
+
+        function showStaticCards(skeleton, grid) {
+            skeleton.style.display = 'none';
+            const staticItems = [
+                { id: 0, title: 'Sony FX6 Full-Frame Cinema Camera', category: 'Cameras', price: '$120', img: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=500&q=80', location: 'Los Angeles, CA' },
+                { id: 0, title: 'DJI Mavic 3 Pro Drone', category: 'Drones', price: '$85', img: 'https://images.unsplash.com/photo-1506947411487-a56738267384?auto=format&fit=crop&w=500&q=80', location: 'Chicago, IL' },
+                { id: 0, title: 'Commercial Power Drill Set', category: 'Power Tools', price: '$45', img: 'https://images.unsplash.com/photo-1504148455328-c376907d081c?auto=format&fit=crop&w=500&q=80', location: 'Houston, TX' },
+                { id: 0, title: 'Professional Audio Mixer Board', category: 'Audio', price: '$65', img: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=500&q=80', location: 'New York, NY' },
+            ];
+            grid.innerHTML = '';
+            staticItems.forEach(item => {
+                const card = document.createElement('article');
+                card.className = 'equip-card fade-in';
+                card.setAttribute('aria-label', `${item.title} — ${item.price} per day`);
+                card.innerHTML = `
+                    <div class="equip-img-wrap">
+                        <img class="equip-img" src="${item.img}" alt="${item.title}" loading="lazy">
+                        <button class="equip-wishlist" aria-label="Add to wishlist"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg></button>
+                        <div class="equip-badge"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Verified</div>
+                    </div>
+                    <div class="equip-body">
+                        <div class="equip-meta-top">
+                            <div class="equip-category">${item.category}</div>
+                            <div class="equip-rating"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>4.9</div>
+                        </div>
+                        <div class="equip-title">${item.title}</div>
+                        <div class="equip-location"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>${item.location}</div>
+                        <div class="equip-footer">
+                            <div><span class="equip-price">${item.price}</span><span class="equip-price-unit">/day</span></div>
+                            <a href="marketplace.html" class="btn-book-now">Browse</a>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+                setTimeout(() => observer.observe(card), 0);
+            });
+            grid.style.display = 'grid';
+        }
+
+        // Load equipment on page ready
+        if (typeof apiFetch !== 'undefined') {
+            loadFeaturedEquipment();
+        } else {
+            // Wait for scripts to load
+            document.addEventListener('DOMContentLoaded', loadFeaturedEquipment);
+        }
+
+    })();
+    </script>
+</body>
+</html>

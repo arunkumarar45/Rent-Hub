@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - RentHub</title>
+    <meta name="description" content="Manage your rentals, equipment listings, and platform activity on RentHub.">
+    <link rel="stylesheet" href="css/style.css?v=2">
+    <style>
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-4);
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .action-btn-row {
+            display: flex;
+            gap: var(--space-1);
+        }
+        .listing-thumb {
+            width: 48px;
+            height: 36px;
+            object-fit: cover;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-color);
+        }
+        .modal-body-form {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-3);
+        }
+    </style>
+</head>
+<body>
+    <div id="navbar-mount"></div>
+
+    <main class="container">
+        <div class="dashboard-layout">
+            <!-- Sidebar Navigation -->
+            <aside class="sidebar">
+                <div class="sidebar-nav">
+                    <a href="#" class="sidebar-link active" id="tab-renter-btn" onclick="switchTab(event, 'renter')">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg>
+                        <span>My Rentals</span>
+                    </a>
+                    <a href="#" class="sidebar-link" id="tab-owner-btn" style="display: none;" onclick="switchTab(event, 'owner')">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                        <span>Owner Panel</span>
+                    </a>
+                    <a href="#" class="sidebar-link" id="tab-admin-btn" style="display: none;" onclick="switchTab(event, 'admin')">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m4.93 4.93 4.24 4.24M14.83 9.17l4.24-4.24M9.17 14.83l-4.24 4.24M14.83 14.83l4.24 4.24"/></svg>
+                        <span>Admin Center</span>
+                    </a>
+                </div>
+            </aside>
+
+            <!-- Dashboard Content Panels -->
+            <section style="flex-grow: 1;">
+                <!-- RENTER PANEL -->
+                <div id="tab-renter" class="tab-content active">
+                    <div class="section-header">
+                        <div>
+                            <h2 style="font-size: 1.5rem; font-family: 'Manrope', sans-serif;">My Rentals</h2>
+                            <p style="font-size: 0.85rem; color: var(--text-secondary);">Track your active bookings, collect receipts, and submit reviews.</p>
+                        </div>
+                        <a href="become-owner.html" class="btn btn-primary btn-sm">List New Gear</a>
+                    </div>
+                    
+                    <div class="card" style="padding: 0; overflow: hidden; margin-top: var(--space-4);">
+                        <div id="renter-loader-container"></div>
+                        <div id="renter-table-wrapper" class="table-responsive" style="display: none;">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Equipment</th>
+                                        <th>Dates</th>
+                                        <th>Daily Rate</th>
+                                        <th>Total</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="renter-bookings-list"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- OWNER PANEL -->
+                <div id="tab-owner" class="tab-content">
+                    <div class="section-header">
+                        <div>
+                            <h2 style="font-size: 1.5rem; font-family: 'Manrope', sans-serif;">Owner Dashboard</h2>
+                            <p style="font-size: 0.85rem; color: var(--text-secondary);">Manage incoming requests, track payouts, and schedule blocked dates.</p>
+                        </div>
+                    </div>
+
+                    <!-- Metrics Widget Row -->
+                    <div id="owner-metrics-container" class="metrics-row grid-3 mb-6"></div>
+
+                    <!-- Owner Listings Section -->
+                    <h3 style="font-size: 1.15rem; font-family: 'Manrope', sans-serif;" class="mb-3">Listed Gear Inventory</h3>
+                    <div class="card" style="padding: 0; overflow: hidden;" class="mb-6">
+                        <div id="owner-listings-loader"></div>
+                        <div id="owner-listings-wrapper" class="table-responsive" style="display: none;">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Thumbnail</th>
+                                        <th>Gear Title</th>
+                                        <th>Daily Rate</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="owner-listings-list"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Incoming Rental Requests Section -->
+                    <h3 style="font-size: 1.15rem; font-family: 'Manrope', sans-serif;" class="mb-3 mt-6">Incoming Rental Requests</h3>
+                    <div class="card" style="padding: 0; overflow: hidden;">
+                        <div id="owner-requests-loader"></div>
+                        <div id="owner-requests-wrapper" class="table-responsive" style="display: none;">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Gear</th>
+                                        <th>Customer</th>
+                                        <th>Dates</th>
+                                        <th>Payout</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="owner-orders-list"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ADMIN PANEL -->
+                <div id="tab-admin" class="tab-content">
+                    <div class="section-header">
+                        <div>
+                            <h2 style="font-size: 1.5rem; font-family: 'Manrope', sans-serif;">Admin Control Center</h2>
+                            <p style="font-size: 0.85rem; color: var(--text-secondary);">Moderate flagged customer reviews and manage global promo coupon codes.</p>
+                        </div>
+                    </div>
+
+                    <!-- Pending Reviews Mod Section -->
+                    <h3 style="font-size: 1.15rem; font-family: 'Manrope', sans-serif;" class="mb-3">Pending Review Moderation</h3>
+                    <div class="card" style="padding: 0; overflow: hidden;" class="mb-6">
+                        <div id="admin-reviews-loader"></div>
+                        <div id="admin-reviews-wrapper" class="table-responsive" style="display: none;">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Reviewer</th>
+                                        <th>Stars</th>
+                                        <th>Feedback Comment</th>
+                                        <th>Date</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="admin-reviews-list"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Coupons Manager Section -->
+                    <div style="display: flex; justify-content: space-between; align-items: center;" class="mb-3 mt-6">
+                        <h3 style="font-size: 1.15rem; font-family: 'Manrope', sans-serif;">Global Coupon Codes</h3>
+                        <button class="btn btn-primary btn-sm" onclick="openCreateCouponModal()">Create Coupon</button>
+                    </div>
+                    <div class="card" style="padding: 0; overflow: hidden;">
+                        <div id="admin-coupons-loader"></div>
+                        <div id="admin-coupons-wrapper" class="table-responsive" style="display: none;">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Promo Code</th>
+                                        <th>Discount</th>
+                                        <th>Min Order</th>
+                                        <th>Start Date</th>
+                                        <th>End Date</th>
+                                        <th>Active</th>
+                                        <th>Usage</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="admin-coupons-list"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Modals System -->
+    <!-- Renter Review Modal -->
+    <div class="modal-backdrop" id="review-backdrop"></div>
+    <div class="modal" id="review-modal">
+        <div class="modal-header">
+            <h3>Rate Your Rental</h3>
+            <button class="modal-close" onclick="closeReviewModal()">&times;</button>
+        </div>
+        <form id="review-form" class="modal-body-form">
+            <input type="hidden" id="modal-booking-id">
+            <div>
+                <label style="font-size: 0.8rem; font-weight: 600; display: block; margin-bottom: 4px;" for="modal-rating">Star Rating</label>
+                <select id="modal-rating" class="input-field" style="padding-left: var(--space-3); height: 40px;">
+                    <option value="5">★★★★★ (5 – Excellent)</option>
+                    <option value="4">★★★★☆ (4 – Very Good)</option>
+                    <option value="3">★★★☆☆ (3 – Average)</option>
+                    <option value="2">★★☆☆☆ (2 – Poor)</option>
+                    <option value="1">★☆☆☆☆ (1 – Very Poor)</option>
+                </select>
+            </div>
+            <div>
+                <label style="font-size: 0.8rem; font-weight: 600; display: block; margin-bottom: 4px;" for="modal-comment">Written Feedback</label>
+                <textarea id="modal-comment" class="input-field" placeholder="How was your experience using this gear?" rows="3" style="padding-left: var(--space-3); padding-top: var(--space-2); resize: none;" required></textarea>
+            </div>
+            <div style="display: flex; gap: var(--space-2); justify-content: flex-end; margin-top: var(--space-2);">
+                <button type="button" class="btn btn-secondary" onclick="closeReviewModal()">Cancel</button>
+                <button type="submit" class="btn btn-primary">Submit Review</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Owner Block Calendar Modal -->
+    <div class="modal-backdrop" id="block-backdrop"></div>
+    <div class="modal" id="block-calendar-modal">
+        <div class="modal-header">
+            <h3>Schedule Blocked Dates</h3>
+            <button class="modal-close" onclick="closeBlockModal()">&times;</button>
+        </div>
+        <form id="block-calendar-form" class="modal-body-form">
+            <input type="hidden" id="block-equip-id">
+            <div>
+                <label style="font-size: 0.8rem; font-weight: 600; display: block; margin-bottom: 4px;" for="block-dates-list">Dates (comma-separated, YYYY-MM-DD)</label>
+                <input type="text" id="block-dates-list" class="input-field" placeholder="e.g. 2026-07-10, 2026-07-11" style="padding-left: var(--space-3); height: 40px;" required>
+            </div>
+            <div>
+                <label style="font-size: 0.8rem; font-weight: 600; display: block; margin-bottom: 4px;" for="block-reason">Reason for Blocking</label>
+                <input type="text" id="block-reason" class="input-field" placeholder="Personal maintenance / Out of town" style="padding-left: var(--space-3); height: 40px;" required>
+            </div>
+            <div style="display: flex; gap: var(--space-2); justify-content: flex-end; margin-top: var(--space-2);">
+                <button type="button" class="btn btn-secondary" onclick="closeBlockModal()">Cancel</button>
+                <button type="submit" class="btn btn-primary">Block Dates</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Admin Create Coupon Modal -->
+    <div class="modal-backdrop" id="coupon-backdrop"></div>
+    <div class="modal" id="coupon-modal" style="max-width: 520px;">
+        <div class="modal-header">
+            <h3>Create Promo Coupon Code</h3>
+            <button class="modal-close" onclick="closeCreateCouponModal()">&times;</button>
+        </div>
+        <form id="coupon-create-form" class="modal-body-form">
+            <div class="form-row">
+                <div>
+                    <label style="font-size: 0.8rem; font-weight: 600; display: block; margin-bottom: 4px;" for="coupon-code">Promo Code</label>
+                    <input type="text" id="coupon-code" class="input-field" placeholder="e.g. RENT25" style="text-transform: uppercase; padding-left: var(--space-3); height: 40px;" required>
+                </div>
+                <div>
+                    <label style="font-size: 0.8rem; font-weight: 600; display: block; margin-bottom: 4px;" for="coupon-type">Discount Type</label>
+                    <select id="coupon-type" class="input-field" style="padding-left: var(--space-3); height: 40px;" required>
+                        <option value="PERCENTAGE">Percentage (%)</option>
+                        <option value="FIXED_AMOUNT">Fixed Amount ($)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div>
+                    <label style="font-size: 0.8rem; font-weight: 600; display: block; margin-bottom: 4px;" for="coupon-value">Discount Value</label>
+                    <input type="number" id="coupon-value" class="input-field" placeholder="e.g. 15 for 15% or 20 for $20" style="padding-left: var(--space-3); height: 40px;" min="1" required>
+                </div>
+                <div>
+                    <label style="font-size: 0.8rem; font-weight: 600; display: block; margin-bottom: 4px;" for="coupon-min-amount">Min Order Amount ($)</label>
+                    <input type="number" id="coupon-min-amount" class="input-field" placeholder="e.g. 50" style="padding-left: var(--space-3); height: 40px;" min="0" value="0" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div>
+                    <label style="font-size: 0.8rem; font-weight: 600; display: block; margin-bottom: 4px;" for="coupon-start">Start Date</label>
+                    <input type="date" id="coupon-start" class="input-field" style="padding-left: var(--space-3); height: 40px;" required>
+                </div>
+                <div>
+                    <label style="font-size: 0.8rem; font-weight: 600; display: block; margin-bottom: 4px;" for="coupon-end">End Date</label>
+                    <input type="date" id="coupon-end" class="input-field" style="padding-left: var(--space-3); height: 40px;" required>
+                </div>
+            </div>
+            <div>
+                <label style="font-size: 0.8rem; font-weight: 600; display: block; margin-bottom: 4px;" for="coupon-max-uses">Max Uses (0 = Unlimited)</label>
+                <input type="number" id="coupon-max-uses" class="input-field" placeholder="e.g. 200" style="padding-left: var(--space-3); height: 40px;" min="0" value="0" required>
+            </div>
+            <div style="display: flex; gap: var(--space-2); justify-content: flex-end; margin-top: var(--space-2);">
+                <button type="button" class="btn btn-secondary" onclick="closeCreateCouponModal()">Cancel</button>
+                <button type="submit" class="btn btn-primary">Create Coupon</button>
+            </div>
+        </form>
+    </div>
+
+    <div id="footer-mount"></div>
+
+    <!-- Core Modular Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/notification.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/modal.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/navbar.js"></script>
+    <script>
+        Auth.requireAuth();
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await syncProfile();
+            const user = Auth.getUser();
+
+            if (user) {
+                const isOwner = user.isOwner || (user.roles && user.roles.includes('ROLE_OWNER'));
+                document.getElementById('tab-owner-btn').style.display = isOwner ? 'flex' : 'none';
+                if (user.roles && user.roles.includes('ROLE_ADMIN')) {
+                    document.getElementById('tab-admin-btn').style.display = 'flex';
+                }
+            }
+
+            await loadRenterHub();
+        });
+
+        async function syncProfile() {
+            try {
+                const response = await apiFetch('/users/profile');
+                if (response && response.data) {
+                    localStorage.setItem('user_profile', JSON.stringify(response.data));
+                }
+            } catch (err) {
+                console.error('Profile sync fail:', err);
+            }
+        }
+
+        function switchTab(e, tabName) {
+            e.preventDefault();
+            document.querySelectorAll('.sidebar-link').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            
+            e.currentTarget.classList.add('active');
+            document.getElementById(`tab-${tabName}`).classList.add('active');
+
+            if (tabName === 'renter') loadRenterHub();
+            if (tabName === 'owner') loadOwnerPanel();
+            if (tabName === 'admin') loadAdminPanel();
+        }
+
+        // ==================== RENTER TAB ====================
+        async function loadRenterHub() {
+            const loader = document.getElementById('renter-loader-container');
+            const wrapper = document.getElementById('renter-table-wrapper');
+            const list = document.getElementById('renter-bookings-list');
+
+            loader.style.display = 'block';
+            UI.showSkeleton(loader, 'table', 3);
+            wrapper.style.display = 'none';
+
+            try {
+                const response = await apiFetch('/bookings/my');
+                loader.style.display = 'none';
+                list.innerHTML = '';
+
+                if (response && response.data && response.data.length > 0) {
+                    response.data.forEach(book => {
+                        const tr = document.createElement('tr');
+
+                        const actionBtn = book.status === 'COMPLETED'
+                            ? `<button class="btn btn-secondary btn-sm" onclick="openReviewModal(${book.id})">Rate</button>`
+                            : (book.status === 'APPROVED' || book.status === 'PENDING'
+                                ? `<button class="btn btn-danger btn-sm" onclick="cancelBooking(${book.id})">Cancel</button>`
+                                : '');
+
+                        // Dynamically download invoice from DTO URL
+                        const invoiceLink = book.invoiceUrl
+                            ? `<a href="http://localhost:8080${book.invoiceUrl}" target="_blank" class="btn btn-ghost btn-sm" style="display:inline-flex; align-items:center; gap:4px;">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+                                PDF
+                               </a>`
+                            : '';
+
+                        tr.innerHTML = `
+                            <td><strong style="font-weight:600;">${Utils.sanitize(book.equipmentTitle || 'Gear Item')}</strong></td>
+                            <td style="white-space: nowrap;">${Utils.formatDate(book.startDate)} – ${Utils.formatDate(book.endDate)}</td>
+                            <td>${Utils.formatCurrency(book.dailyRate)}/day</td>
+                            <td>${Utils.formatCurrency(book.totalPrice)}</td>
+                            <td><span class="badge badge-${book.status.toLowerCase()}">${book.status}</span></td>
+                            <td>
+                                <div class="action-btn-row">
+                                    ${actionBtn}
+                                    ${invoiceLink}
+                                </div>
+                            </td>
+                        `;
+                        list.appendChild(tr);
+                    });
+                    wrapper.style.display = 'block';
+                } else {
+                    UI.showEmptyState(loader, "No bookings placed yet", "Explore the gear catalog and submit your first rental reservation request.", `
+                        <a href="marketplace.html" class="btn btn-primary">Go to Marketplace</a>
+                    `);
+                }
+            } catch (err) {
+                console.error("Failed to load renter rentals:", err);
+                loader.style.display = 'none';
+                UI.showEmptyState(loader, "Failed to load bookings list", err.message || "API server is currently offline.");
+            }
+        }
+
+        async function cancelBooking(id) {
+            if (!confirm('Are you sure you want to cancel this booking reservation?')) return;
+            const reason = prompt('Specify the reason for cancellation:');
+            if (reason === null) return; // cancelled prompt
+            if (!reason.trim()) {
+                Toast.warning('Cancellation reason is required.');
+                return;
+            }
+
+            try {
+                await apiFetch(`/bookings/${id}/cancel?reason=${encodeURIComponent(reason.trim())}`, { method: 'PATCH' });
+                Toast.success('Booking cancelled successfully.');
+                await loadRenterHub();
+            } catch (err) {
+                Toast.error('Cancellation failed: ' + err.message);
+            }
+        }
+
+        // ==================== OWNER PANEL TAB ====================
+        async function loadOwnerPanel() {
+            const metricsContainer = document.getElementById('owner-metrics-container');
+            const listingsLoader = document.getElementById('owner-listings-loader');
+            const listingsWrapper = document.getElementById('owner-listings-wrapper');
+            const listingsList = document.getElementById('owner-listings-list');
+            
+            const requestsLoader = document.getElementById('owner-requests-loader');
+            const requestsWrapper = document.getElementById('owner-requests-wrapper');
+            const ordersList = document.getElementById('owner-orders-list');
+
+            // Set Skeletons
+            metricsContainer.innerHTML = '';
+            UI.showSkeleton(metricsContainer, 'metrics', 3);
+
+            listingsLoader.style.display = 'block';
+            UI.showSkeleton(listingsLoader, 'table', 2);
+            listingsWrapper.style.display = 'none';
+
+            requestsLoader.style.display = 'block';
+            UI.showSkeleton(requestsLoader, 'table', 2);
+            requestsWrapper.style.display = 'none';
+
+            try {
+                // 1. Fetch dashboard metrics
+                const metrics = await apiFetch('/owner/dashboard');
+                metricsContainer.innerHTML = '';
+                if (metrics && metrics.data) {
+                    const data = metrics.data;
+                    metricsContainer.innerHTML = `
+                        <div class="metric-card">
+                            <div class="metric-header"><span>Total Income</span></div>
+                            <div class="metric-value">${Utils.formatCurrency(data.totalEarnings || 0)}</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-header"><span>Listed Inventory</span></div>
+                            <div class="metric-value">${data.activeListingsCount || 0}</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-header"><span>Total Bookings</span></div>
+                            <div class="metric-value">${data.totalBookingsCount || 0}</div>
+                        </div>
+                    `;
+                }
+
+                // 2. Fetch owner's equipment inventory
+                const listings = await apiFetch('/owner/equipment/my');
+                listingsLoader.style.display = 'none';
+                listingsList.innerHTML = '';
+
+                if (listings && listings.data && listings.data.length > 0) {
+                    listings.data.forEach(item => {
+                        const tr = document.createElement('tr');
+                        const statusBadge = item.isActive
+                            ? `<span class="badge badge-approved">Active</span>`
+                            : `<span class="badge badge-cancelled">Inactive</span>`;
+                        const fallBack = 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=150&q=80';
+
+                        tr.innerHTML = `
+                            <td><img class="listing-thumb" src="${item.imageUrl || fallBack}" alt=""></td>
+                            <td style="font-weight:600;">${Utils.sanitize(item.title)}</td>
+                            <td>${Utils.formatCurrency(item.dailyRate)}/day</td>
+                            <td>${statusBadge}</td>
+                            <td>
+                                <button class="btn btn-secondary btn-sm" onclick="openBlockModal(${item.id})">Block Calendar</button>
+                            </td>
+                        `;
+                        listingsList.appendChild(tr);
+                    });
+                    listingsWrapper.style.display = 'block';
+                } else {
+                    UI.showEmptyState(listingsLoader, "No equipment inventory listed", "List your heavy machinery, cameras, or power tools to start generating yield.", `
+                        <a href="become-owner.html" class="btn btn-primary">List Gear</a>
+                    `);
+                }
+
+                // 3. Fetch incoming rental orders
+                const orders = await apiFetch('/bookings/incoming');
+                requestsLoader.style.display = 'none';
+                ordersList.innerHTML = '';
+
+                if (orders && orders.data && orders.data.length > 0) {
+                    orders.data.forEach(ord => {
+                        const tr = document.createElement('tr');
+                        const actionBtns = ord.status === 'PENDING'
+                            ? `<div class="action-btn-row">
+                                <button class="btn btn-primary btn-sm" onclick="approveRental(${ord.id}, 'approve')">Approve</button>
+                                <button class="btn btn-secondary btn-sm" onclick="approveRental(${ord.id}, 'reject')">Reject</button>
+                               </div>`
+                            : '—';
+                        
+                        tr.innerHTML = `
+                            <td><strong style="font-weight:600;">${Utils.sanitize(ord.equipmentTitle)}</strong></td>
+                            <td>${Utils.sanitize(ord.customerName)}</td>
+                            <td style="white-space:nowrap;">${Utils.formatDate(ord.startDate)} – ${Utils.formatDate(ord.endDate)}</td>
+                            <td>${Utils.formatCurrency(ord.rentalPrice)}</td>
+                            <td><span class="badge badge-${ord.status.toLowerCase()}">${ord.status}</span></td>
+                            <td>${actionBtns}</td>
+                        `;
+                        ordersList.appendChild(tr);
+                    });
+                    requestsWrapper.style.display = 'block';
+                } else {
+                    UI.showEmptyState(requestsLoader, "No incoming rental requests", "We'll notify you here once customers reserve your equipment listings.");
+                }
+            } catch (err) {
+                console.error("Failed to load owner data:", err);
+                listingsLoader.style.display = 'none';
+                requestsLoader.style.display = 'none';
+                UI.showEmptyState(listingsLoader, "Failed to load owner panel info", err.message || "Server connection issues.");
+            }
+        }
+
+        async function approveRental(id, action) {
+            try {
+                await apiFetch(`/bookings/${id}/${action}`, { method: 'PATCH' });
+                Toast.success(`Booking request successfully ${action}d!`);
+                await loadOwnerPanel();
+            } catch (err) {
+                Toast.error(`Operation failed: ${err.message}`);
+            }
+        }
+
+        // ==================== ADMIN TAB PANEL ====================
+        async function loadAdminPanel() {
+            const reviewsLoader = document.getElementById('admin-reviews-loader');
+            const reviewsWrapper = document.getElementById('admin-reviews-wrapper');
+            const reviewsList = document.getElementById('admin-reviews-list');
+            
+            const couponsLoader = document.getElementById('admin-coupons-loader');
+            const couponsWrapper = document.getElementById('admin-coupons-wrapper');
+            const couponsList = document.getElementById('admin-coupons-list');
+
+            reviewsLoader.style.display = 'block';
+            UI.showSkeleton(reviewsLoader, 'table', 2);
+            reviewsWrapper.style.display = 'none';
+
+            couponsLoader.style.display = 'block';
+            UI.showSkeleton(couponsLoader, 'table', 2);
+            couponsWrapper.style.display = 'none';
+
+            try {
+                // 1. Fetch pending reviews moderation
+                const reviews = await apiFetch('/admin/reviews/pending');
+                reviewsLoader.style.display = 'none';
+                reviewsList.innerHTML = '';
+
+                if (reviews && reviews.data && reviews.data.length > 0) {
+                    reviews.data.forEach(rev => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td style="font-weight:600;">${Utils.sanitize(rev.reviewerName)}</td>
+                            <td style="color:var(--color-warning);">${'★'.repeat(rev.rating)}</td>
+                            <td style="max-width:240px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">"${Utils.sanitize(rev.comment)}"</td>
+                            <td>${Utils.formatDate(rev.createdAt)}</td>
+                            <td>
+                                <div class="action-btn-row">
+                                    <button class="btn btn-primary btn-sm" onclick="moderateReview(${rev.id}, true)">Approve</button>
+                                    <button class="btn btn-secondary btn-sm" onclick="moderateReview(${rev.id}, false)">Flag</button>
+                                </div>
+                            </td>
+                        `;
+                        reviewsList.appendChild(tr);
+                    });
+                    reviewsWrapper.style.display = 'block';
+                } else {
+                    UI.showEmptyState(reviewsLoader, "No pending reviews", "Everything is clear! Reviews moderation is fully processed.");
+                }
+
+                // 2. Fetch admin coupons
+                const coupons = await apiFetch('/admin/coupons');
+                couponsLoader.style.display = 'none';
+                couponsList.innerHTML = '';
+
+                if (coupons && coupons.data && coupons.data.length > 0) {
+                    coupons.data.forEach(cp => {
+                        const tr = document.createElement('tr');
+                        const discountStr = cp.discountType === 'PERCENTAGE' 
+                            ? `${cp.value}%` 
+                            : Utils.formatCurrency(cp.value);
+                        
+                        tr.innerHTML = `
+                            <td><code style="font-weight:700; color:var(--text-primary); font-size:0.9rem;">${Utils.sanitize(cp.code)}</code></td>
+                            <td>${discountStr}</td>
+                            <td>${Utils.formatCurrency(cp.minBookingAmount)}</td>
+                            <td>${Utils.formatDate(cp.startDate)}</td>
+                            <td>${Utils.formatDate(cp.endDate)}</td>
+                            <td><span class="badge badge-${cp.isActive ? 'approved' : 'cancelled'}">${cp.isActive ? 'Yes' : 'No'}</span></td>
+                            <td>${cp.usesCount} / ${cp.maxUses > 0 ? cp.maxUses : '∞'}</td>
+                            <td>
+                                <button class="btn btn-danger btn-sm" onclick="deleteCoupon(${cp.id})">Delete</button>
+                            </td>
+                        `;
+                        couponsList.appendChild(tr);
+                    });
+                    couponsWrapper.style.display = 'block';
+                } else {
+                    UI.showEmptyState(couponsLoader, "No coupons generated", "Create your first global discount code to start promoting sales.", `
+                        <button class="btn btn-secondary btn-sm" onclick="openCreateCouponModal()">Create Code</button>
+                    `);
+                }
+            } catch (err) {
+                console.error("Failed to load admin panel:", err);
+                reviewsLoader.style.display = 'none';
+                couponsLoader.style.display = 'none';
+                UI.showEmptyState(reviewsLoader, "Failed to load admin moderation list", err.message || "Connection failed.");
+            }
+        }
+
+        async function moderateReview(id, approve) {
+            try {
+                const comment = approve ? 'Approved review' : 'Flagged content - policy violation';
+                await apiFetch(`/admin/reviews/${id}/moderate?approve=${approve}&comment=${encodeURIComponent(comment)}`, { method: 'PATCH' });
+                Toast.success(approve ? "Review has been approved." : "Review has been flagged/removed.");
+                await loadAdminPanel();
+            } catch (err) {
+                Toast.error("Review moderation failed: " + err.message);
+            }
+        }
+
+        async function deleteCoupon(id) {
+            if (!confirm('Are you sure you want to permanently delete this coupon code?')) return;
+            try {
+                await apiFetch(`/admin/coupons/${id}`, { method: 'DELETE' });
+                Toast.success("Coupon code deleted successfully.");
+                await loadAdminPanel();
+            } catch (err) {
+                Toast.error("Failed to delete coupon: " + err.message);
+            }
+        }
+
+        // ==================== MODALS INTERACTION LOGIC ====================
+        // 1. Renter Review Modal
+        function openReviewModal(bookingId) {
+            document.getElementById('modal-booking-id').value = bookingId;
+            document.getElementById('modal-comment').value = '';
+            Modal.open('review-modal', 'review-backdrop');
+        }
+        function closeReviewModal() {
+            Modal.close('review-modal', 'review-backdrop');
+        }
+
+        document.getElementById('review-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const bookingId = document.getElementById('modal-booking-id').value;
+            const rating = document.getElementById('modal-rating').value;
+            const comment = document.getElementById('modal-comment').value;
+
+            try {
+                await apiFetch(`/reviews?bookingId=${bookingId}&rating=${rating}&comment=${encodeURIComponent(comment)}`, { method: 'POST' });
+                Toast.success("Thank you for submitting your review!");
+                closeReviewModal();
+                await loadRenterHub();
+            } catch (err) {
+                Toast.error("Failed to submit review: " + err.message);
+            }
+        });
+
+        // 2. Block Calendar Modal
+        function openBlockModal(equipId) {
+            document.getElementById('block-equip-id').value = equipId;
+            document.getElementById('block-dates-list').value = '';
+            document.getElementById('block-reason').value = '';
+            Modal.open('block-calendar-modal', 'block-backdrop');
+        }
+        function closeBlockModal() {
+            Modal.close('block-calendar-modal', 'block-backdrop');
+        }
+
+        document.getElementById('block-calendar-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const equipId = document.getElementById('block-equip-id').value;
+            const datesText = document.getElementById('block-dates-list').value;
+            const reason = document.getElementById('block-reason').value;
+            const datesArray = datesText.split(',').map(d => d.trim()).filter(Boolean);
+
+            if (datesArray.length === 0) {
+                Toast.warning("Please supply at least one date.");
+                return;
+            }
+
+            try {
+                await apiFetch(`/owner/equipment/${equipId}/block-dates?dates=${encodeURIComponent(datesArray.join(','))}&reason=${encodeURIComponent(reason)}`, { method: 'POST' });
+                Toast.success("Successfully updated calendar blocked dates!");
+                closeBlockModal();
+                await loadOwnerPanel();
+            } catch (err) {
+                Toast.error("Failed to block calendar: " + err.message);
+            }
+        });
+
+        // 3. Create Coupon Modal
+        function openCreateCouponModal() {
+            document.getElementById('coupon-code').value = '';
+            document.getElementById('coupon-value').value = '';
+            document.getElementById('coupon-min-amount').value = '0';
+            document.getElementById('coupon-max-uses').value = '0';
+            
+            // Set default dates (today to next month)
+            const today = new Date();
+            const nextMonth = new Date();
+            nextMonth.setMonth(nextMonth.getMonth() + 1);
+            
+            document.getElementById('coupon-start').value = today.toISOString().split('T')[0];
+            document.getElementById('coupon-end').value = nextMonth.toISOString().split('T')[0];
+            
+            Modal.open('coupon-modal', 'coupon-backdrop');
+        }
+        function closeCreateCouponModal() {
+            Modal.close('coupon-modal', 'coupon-backdrop');
+        }
+
+        document.getElementById('coupon-create-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const code = document.getElementById('coupon-code').value.trim().toUpperCase();
+            const discountType = document.getElementById('coupon-type').value;
+            const valueVal = parseFloat(document.getElementById('coupon-value').value);
+            const minAmountVal = parseFloat(document.getElementById('coupon-min-amount').value);
+            const startVal = document.getElementById('coupon-start').value;
+            const endVal = document.getElementById('coupon-end').value;
+            const maxUses = parseInt(document.getElementById('coupon-max-uses').value);
+
+            // Conversion to cents for fixed rates
+            const value = discountType === 'FIXED_AMOUNT' ? Math.round(valueVal * 100) : valueVal;
+            const minBookingAmount = Math.round(minAmountVal * 100);
+
+            try {
+                await apiFetch('/admin/coupons', {
+                    method: 'POST',
+                    body: {
+                        code,
+                        discountType,
+                        value,
+                        minBookingAmount,
+                        startDate: startVal + 'T00:00:00',
+                        endDate: endVal + 'T23:59:59',
+                        maxUses,
+                        isActive: true
+                    }
+                });
+                Toast.success("Successfully generated new coupon!");
+                closeCreateCouponModal();
+                await loadAdminPanel();
+            } catch (err) {
+                Toast.error("Failed to generate coupon: " + err.message);
+            }
+        });
+    </script>
+</body>
+</html>

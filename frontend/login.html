@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In - RentHub</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .auth-card {
+            max-width: 420px;
+            margin: var(--space-12) auto;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div id="navbar-mount"></div>
+
+    <main class="container">
+        <div class="card auth-card">
+            <h2 style="font-size: 1.5rem; margin-bottom: var(--space-2); text-align: center; font-family: 'Manrope', sans-serif;">Welcome Back</h2>
+            <p style="text-align: center; margin-bottom: var(--space-6); font-size: 0.875rem;">Sign in to access your dashboard, bookings, and owner panel.</p>
+            
+            <div id="login-error-alert" class="alert alert-danger" style="display: none;"></div>
+
+            <form id="login-form" novalidate>
+                <!-- Floating Email Group -->
+                <div class="floating-group">
+                    <input type="email" id="email" class="form-input" placeholder=" " required autocomplete="email">
+                    <label class="form-label" for="email">Email Address</label>
+                    <span class="error-msg">Please enter a valid email address.</span>
+                </div>
+                
+                <!-- Floating Password Group -->
+                <div class="floating-group" style="margin-bottom: var(--space-6);">
+                    <input type="password" id="password" class="form-input" placeholder=" " required autocomplete="current-password">
+                    <label class="form-label" for="password">Password</label>
+                    <span class="error-msg">Password is required.</span>
+                </div>
+
+                <button type="submit" id="login-submit-btn" class="btn btn-primary" style="width: 100%; margin-bottom: var(--space-4); height: 44px;">
+                    Sign In
+                </button>
+            </form>
+
+            <p style="font-size: 0.875rem; text-align: center; color: var(--text-secondary);">
+                New to RentHub? <a href="signup.html">Create an account</a>
+            </p>
+        </div>
+    </main>
+
+    <div id="footer-mount"></div>
+
+    <!-- Core Modular Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/notification.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/modal.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/validation.js"></script>
+    <script src="js/navbar.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialise floating label animation
+            if (window.Validation) {
+                Validation.initFloatingLabels();
+            }
+
+            const loginForm = document.getElementById('login-form');
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
+            const submitBtn = document.getElementById('login-submit-btn');
+            const errorAlert = document.getElementById('login-error-alert');
+
+            // Real-time validations on blur
+            emailInput.addEventListener('blur', () => {
+                const isValid = Validation.validateEmail(emailInput.value);
+                Validation.setFieldError(emailInput, isValid ? '' : 'Enter a valid email address.');
+            });
+
+            passwordInput.addEventListener('blur', () => {
+                Validation.setFieldError(passwordInput, passwordInput.value.length > 0 ? '' : 'Password is required.');
+            });
+
+            loginForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                errorAlert.style.display = 'none';
+
+                // Check validations
+                const emailValid = Validation.validateEmail(emailInput.value);
+                const passwordValid = passwordInput.value.length > 0;
+
+                Validation.setFieldError(emailInput, emailValid ? '' : 'Enter a valid email address.');
+                Validation.setFieldError(passwordInput, passwordValid ? '' : 'Password is required.');
+
+                if (!emailValid || !passwordValid) return;
+
+                // Toggle button loading spinner
+                UI.setButtonLoading(submitBtn, true);
+
+                try {
+                    const response = await apiFetch('/auth/login', {
+                        method: 'POST',
+                        body: { 
+                            email: emailInput.value.trim(), 
+                            password: passwordInput.value 
+                        }
+                    });
+                    
+                    if (response && response.data && response.data.accessToken) {
+                        Auth.login(response.data.accessToken, response.data.refreshToken, response.data.user);
+                        
+                        Toast.success("Welcome back to RentHub!", "Login Successful");
+
+                        // Redirect check
+                        const urlParams = new URLSearchParams(window.location.search);
+                        const redirectUrl = urlParams.get('redirect');
+                        setTimeout(() => {
+                            window.location.href = redirectUrl ? decodeURIComponent(redirectUrl) : 'dashboard.html';
+                        }, 1000);
+                    } else {
+                        throw new Error("Invalid response format from server");
+                    }
+                } catch (err) {
+                    UI.setButtonLoading(submitBtn, false, 'Sign In');
+                    errorAlert.textContent = err.message || 'Login failed. Please check credentials.';
+                    errorAlert.style.display = 'flex';
+                    Toast.error(err.message || "Failed to log in.");
+                }
+            });
+        });
+    </script>
+</body>
+</html>

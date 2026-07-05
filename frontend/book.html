@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirm Booking - RentHub</title>
+    <meta name="description" content="Pick rental dates and confirm your equipment booking on RentHub.">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .booking-grid {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: var(--space-6);
+            margin-top: var(--space-4);
+        }
+        .section-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-secondary);
+            margin-bottom: var(--space-4);
+        }
+        .section-divider {
+            height: 1px;
+            background: var(--border-color);
+            margin: var(--space-4) 0;
+        }
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-3) 0;
+            font-size: 0.875rem;
+            border-bottom: 1px dashed var(--border-color);
+        }
+        .price-row:last-child {
+            border-bottom: none;
+        }
+        .price-row .label { color: var(--text-secondary); }
+        .price-row .value { font-weight: 600; color: var(--text-primary); }
+        .price-row .discount { color: var(--color-success); font-weight: 600; }
+        
+        .price-total-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-4) 0 0 0;
+            font-size: 1.15rem;
+            font-weight: 700;
+        }
+        .item-preview {
+            display: flex;
+            gap: var(--space-3);
+            align-items: center;
+            margin-bottom: var(--space-4);
+        }
+        .item-preview img {
+            width: 80px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-color);
+            flex-shrink: 0;
+        }
+        .item-preview-info h4 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+        .item-preview-info p {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+        @media (max-width: 768px) {
+            .booking-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="navbar-mount"></div>
+
+    <main class="container">
+        <!-- Breadcrumbs -->
+        <div class="breadcrumb">
+            <a href="marketplace.html">Marketplace</a>
+            <span class="breadcrumb-sep">›</span>
+            <a href="#" id="bc-equipment">Equipment</a>
+            <span class="breadcrumb-sep">›</span>
+            <span>Reserve Checkout</span>
+        </div>
+
+        <div style="margin-bottom: var(--space-6); border-bottom: 1px solid var(--border-color); padding-bottom: var(--space-4);">
+            <h1 style="font-size: 1.75rem; margin-bottom: 4px; font-family: 'Manrope', sans-serif;">Confirm Your Booking</h1>
+            <p style="font-size: 0.875rem;">Specify rental dates, apply coupons, and review rates.</p>
+        </div>
+
+        <!-- Skeleton Loading Container -->
+        <div id="booking-loader-container"></div>
+
+        <div id="booking-layout" class="booking-grid" style="display: none;">
+            <!-- Left Panel: Dates and Coupons -->
+            <div class="card" style="height: fit-content;">
+                <p class="section-label">1. Choose Rental Dates</p>
+
+                <div id="error-alert" class="alert alert-danger" style="display: none;"></div>
+
+                <form id="calc-form" novalidate>
+                    <!-- Dates selectors -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); margin-bottom: var(--space-4);">
+                        <div>
+                            <label style="font-size: 0.8rem; font-weight: 500; color: var(--text-secondary); display: block; margin-bottom: 4px;" for="startDate">Start Date</label>
+                            <input type="date" id="startDate" class="input-field" style="padding-left: var(--space-3); height: 44px;" required>
+                        </div>
+                        <div>
+                            <label style="font-size: 0.8rem; font-weight: 500; color: var(--text-secondary); display: block; margin-bottom: 4px;" for="endDate">End Date</label>
+                            <input type="date" id="endDate" class="input-field" style="padding-left: var(--space-3); height: 44px;" required>
+                        </div>
+                    </div>
+
+                    <div class="section-divider"></div>
+                    <p class="section-label">2. Have a Promo Code?</p>
+
+                    <div style="margin-bottom: var(--space-6);">
+                        <div style="display: flex; gap: var(--space-2);">
+                            <input type="text" id="couponCode" class="input-field" placeholder="Enter coupon (e.g. SAVE20)" style="text-transform: uppercase; padding-left: var(--space-3); height: 44px; flex-grow: 1;">
+                            <button type="button" id="apply-coupon-btn" class="btn btn-secondary" style="height: 44px; white-space: nowrap;">Apply</button>
+                        </div>
+                        <p id="coupon-status" style="font-size: 0.775rem; margin-top: var(--space-2); font-weight: 500; display: none;"></p>
+                    </div>
+
+                    <button type="button" id="calc-btn" class="btn btn-secondary" style="width: 100%; height: 44px; justify-content: center;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                        Calculate Rental Price
+                    </button>
+                </form>
+            </div>
+
+            <!-- Right Panel: Order Receipt Summary -->
+            <div class="card" style="height: fit-content;">
+                <p class="section-label">Order Details</p>
+
+                <div class="item-preview">
+                    <img id="summary-image" src="" alt="">
+                    <div class="item-preview-info">
+                        <h4 id="summary-name">—</h4>
+                        <p id="summary-daily-rate">$0.00/day base rate</p>
+                    </div>
+                </div>
+
+                <div class="section-divider"></div>
+
+                <!-- Receipt breakdown -->
+                <div id="breakdown-box" style="display: none;">
+                    <div class="price-row">
+                        <span class="label">Rental timeline</span>
+                        <span class="value" id="bd-days">0 days</span>
+                    </div>
+                    <div class="price-row">
+                        <span class="label">Subtotal</span>
+                        <span class="value" id="bd-subtotal">$0.00</span>
+                    </div>
+                    <div class="price-row" id="bd-discount-row" style="display: none;">
+                        <span class="discount">Promo code savings</span>
+                        <span class="discount" id="bd-discount">-$0.00</span>
+                    </div>
+                    <div class="price-row">
+                        <span class="label">Refundable security deposit</span>
+                        <span class="value" id="bd-deposit">$0.00</span>
+                    </div>
+                    <div class="price-total-row">
+                        <span>Grand Total</span>
+                        <span id="bd-total" style="color: var(--color-primary);">$0.00</span>
+                    </div>
+
+                    <button id="checkout-btn" class="btn btn-primary" style="width: 100%; margin-top: var(--space-5); height: 46px; justify-content: center; font-size: 0.95rem;">
+                        Confirm & Reserve
+                    </button>
+                    <p style="font-size: 0.75rem; color: var(--text-secondary); text-align: center; margin-top: var(--space-2);">Your payment is securely held as pending. No funds are collected unless the owner accepts.</p>
+                </div>
+
+                <div id="pre-calc-hint" style="padding: var(--space-8) 0; text-align: center; color: var(--text-secondary); font-size: 0.9rem;">
+                    <div style="color: var(--text-muted); margin-bottom: var(--space-3);">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    </div>
+                    Specify your rental dates and click <strong>Calculate Rental Price</strong> to render the receipt breakdown.
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="footer-mount"></div>
+
+    <!-- Core Modular Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/notification.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/modal.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/navbar.js"></script>
+    <script>
+        let equipmentId = null;
+        let item = null;
+        let isCalculated = false;
+        let lastCalculation = null;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            equipmentId = urlParams.get('id');
+
+            if (!equipmentId) {
+                window.location.href = 'marketplace.html';
+                return;
+            }
+
+            const loaderContainer = document.getElementById('booking-loader-container');
+            if (window.UI) {
+                UI.showSkeleton(loaderContainer, 'card-grid', 1);
+            }
+
+            // Set default dates (tomorrow to day after tomorrow)
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            const dayAfter = new Date();
+            dayAfter.setDate(dayAfter.getDate() + 2);
+
+            document.getElementById('startDate').value = tomorrow.toISOString().split('T')[0];
+            document.getElementById('endDate').value = dayAfter.toISOString().split('T')[0];
+
+            await fetchItemDetails();
+
+            document.getElementById('calc-btn').addEventListener('click', calculatePrice);
+            document.getElementById('apply-coupon-btn').addEventListener('click', calculatePrice);
+            document.getElementById('checkout-btn').addEventListener('click', executeBooking);
+        });
+
+        async function fetchItemDetails() {
+            try {
+                const response = await apiFetch(`/equipment/${equipmentId}`);
+                const loaderContainer = document.getElementById('booking-loader-container');
+                loaderContainer.style.display = 'none';
+
+                if (response && response.data) {
+                    item = response.data;
+                    document.getElementById('booking-layout').style.display = 'grid';
+
+                    document.getElementById('bc-equipment').textContent = item.title;
+                    document.getElementById('bc-equipment').href = `equipment.html?id=${equipmentId}`;
+                    document.getElementById('summary-image').src = item.imageUrl || 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=200&q=80';
+                    document.getElementById('summary-image').alt = item.title;
+                    document.getElementById('summary-name').textContent = item.title;
+                    document.getElementById('summary-daily-rate').textContent = `${Utils.formatCurrency(item.dailyRate)}/day base rate`;
+                }
+            } catch (err) {
+                Toast.error("Failed to load equipment details: " + err.message);
+                window.location.href = 'marketplace.html';
+            }
+        }
+
+        async function calculatePrice() {
+            const startDateVal = document.getElementById('startDate').value;
+            const endDateVal = document.getElementById('endDate').value;
+            const couponCode = document.getElementById('couponCode').value.trim().toUpperCase();
+            const errAlert = document.getElementById('error-alert');
+            const preHint = document.getElementById('pre-calc-hint');
+            const cStatus = document.getElementById('coupon-status');
+
+            errAlert.style.display = 'none';
+            cStatus.style.display = 'none';
+            isCalculated = false;
+            document.getElementById('breakdown-box').style.display = 'none';
+
+            if (!startDateVal || !endDateVal) {
+                errAlert.textContent = 'Please specify both start and end dates.';
+                errAlert.style.display = 'flex';
+                return;
+            }
+
+            const start = new Date(startDateVal);
+            const end = new Date(endDateVal);
+            if (start >= end) {
+                errAlert.textContent = 'Start date must occur before the end date.';
+                errAlert.style.display = 'flex';
+                return;
+            }
+
+            try {
+                const response = await apiFetch('/bookings/calculate-price', {
+                    method: 'POST',
+                    body: {
+                        equipmentId: parseInt(equipmentId),
+                        startDate: startDateVal + 'T09:00:00',
+                        endDate: endDateVal + 'T18:00:00',
+                        couponCode: couponCode || null
+                    }
+                });
+
+                if (response && response.data) {
+                    const calc = response.data;
+                    lastCalculation = calc;
+                    isCalculated = true;
+
+                    const diffDays = Math.max(1, Math.ceil((end - start) / (1000 * 60 * 60 * 24)));
+
+                    document.getElementById('bd-days').textContent = `${diffDays} day${diffDays !== 1 ? 's' : ''}`;
+                    document.getElementById('bd-subtotal').textContent = Utils.formatCurrency(calc.rentalPrice);
+                    document.getElementById('bd-deposit').textContent = Utils.formatCurrency(calc.deposit);
+                    document.getElementById('bd-total').textContent = Utils.formatCurrency(calc.totalPrice);
+
+                    const discountRow = document.getElementById('bd-discount-row');
+                    if (calc.discountAmount && calc.discountAmount > 0) {
+                        document.getElementById('bd-discount').textContent = `-${Utils.formatCurrency(calc.discountAmount)}`;
+                        discountRow.style.display = 'flex';
+                        
+                        cStatus.textContent = 'Coupon applied successfully!';
+                        cStatus.style.color = 'var(--color-success)';
+                        cStatus.style.display = 'block';
+                    } else if (couponCode) {
+                        cStatus.textContent = 'Coupon is invalid for this booking amount.';
+                        cStatus.style.color = 'var(--color-danger)';
+                        cStatus.style.display = 'block';
+                        discountRow.style.display = 'none';
+                    } else {
+                        discountRow.style.display = 'none';
+                    }
+
+                    preHint.style.display = 'none';
+                    document.getElementById('breakdown-box').style.display = 'block';
+                }
+            } catch (err) {
+                errAlert.textContent = err.message || 'Price calculation failed. Availability conflicts may exist.';
+                errAlert.style.display = 'flex';
+            }
+        }
+
+        async function executeBooking() {
+            if (!isCalculated || !lastCalculation) return;
+
+            const startDateVal = document.getElementById('startDate').value;
+            const endDateVal = document.getElementById('endDate').value;
+            const couponCode = document.getElementById('couponCode').value.trim().toUpperCase();
+            const btn = document.getElementById('checkout-btn');
+
+            UI.setButtonLoading(btn, true);
+
+            try {
+                const response = await apiFetch('/bookings', {
+                    method: 'POST',
+                    body: {
+                        equipmentId: parseInt(equipmentId),
+                        startDate: startDateVal + 'T09:00:00',
+                        endDate: endDateVal + 'T18:00:00',
+                        couponCode: couponCode || null
+                    }
+                });
+
+                if (response && response.data) {
+                    Toast.success("Booking requested! Redirecting to dashboard...");
+                    setTimeout(() => window.location.href = 'dashboard.html', 1500);
+                }
+            } catch (err) {
+                UI.setButtonLoading(btn, false, 'Confirm & Reserve');
+                document.getElementById('error-alert').textContent = 'Reservation request failed: ' + err.message;
+                document.getElementById('error-alert').style.display = 'flex';
+                Toast.error(err.message || 'Reservation submission failed.');
+            }
+        }
+    </script>
+</body>
+</html>

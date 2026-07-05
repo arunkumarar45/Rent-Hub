@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explore Gear - RentHub Marketplace</title>
+    <meta name="description" content="Browse and filter hundreds of equipment listings from verified owners near you.">
+    <link rel="stylesheet" href="css/style.css?v=2">
+    <style>
+        .marketplace-header {
+            padding-bottom: var(--space-4);
+            margin-bottom: var(--space-6);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .filters-sidebar h3 {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-secondary);
+            font-weight: 600;
+            margin-bottom: var(--space-4);
+        }
+        .filter-section {
+            padding-bottom: var(--space-4);
+            margin-bottom: var(--space-4);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .filter-section:last-of-type {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+        .catalog-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-4);
+        }
+        #results-count {
+            font-size: 0.825rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        .equipment-card {
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            cursor: pointer;
+        }
+        .equipment-img-container {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 1.4;
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            margin-bottom: var(--space-3);
+        }
+        .equipment-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform var(--transition-medium);
+        }
+        .equipment-card:hover .equipment-img {
+            transform: scale(1.03);
+        }
+        .favorite-badge-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #FFFFFF;
+            border: 1px solid var(--border-color);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-sm);
+            cursor: pointer;
+            z-index: 5;
+            transition: all var(--transition-fast);
+            color: var(--text-secondary);
+        }
+        .favorite-badge-btn:hover {
+            color: var(--color-danger);
+            transform: scale(1.05);
+        }
+        .favorite-badge-btn.active {
+            color: var(--color-danger);
+            border-color: var(--color-danger);
+        }
+        .equipment-category {
+            font-size: 0.725rem;
+            font-weight: 600;
+            color: var(--color-primary);
+            text-transform: uppercase;
+            margin-bottom: 2px;
+        }
+        .equipment-title {
+            font-size: 0.95rem;
+            margin-bottom: 4px;
+            line-height: 1.4;
+        }
+        .equipment-desc {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: var(--space-3);
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            line-height: 1.45;
+            height: 36px;
+        }
+        .equipment-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: auto;
+            padding-top: var(--space-2);
+            border-top: 1px solid var(--border-color);
+        }
+        .equipment-price {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        .equipment-price span {
+            font-size: 0.75rem;
+            font-weight: 400;
+            color: var(--text-secondary);
+        }
+    </style>
+</head>
+<body>
+    <div id="navbar-mount"></div>
+
+    <main class="container">
+        <div class="marketplace-header">
+            <h1 style="font-size: 1.75rem; margin-bottom: var(--space-1); font-family: 'Manrope', sans-serif;">Equipment Marketplace</h1>
+            <p style="font-size: 0.875rem;">Rent premium gear or tools from verified locals near you.</p>
+        </div>
+
+        <div class="marketplace-layout">
+            <!-- Sidebar Filters -->
+            <aside class="filters-sidebar card">
+                <h3>Filters</h3>
+
+                <div class="filter-section">
+                    <div class="floating-group" style="margin-bottom: 0;">
+                        <input type="text" id="filter-search" class="form-input" placeholder=" ">
+                        <label class="form-label" for="filter-search">Keyword Search</label>
+                    </div>
+                </div>
+
+                <div class="filter-section">
+                    <div style="margin-bottom: var(--space-3);">
+                        <label style="font-size: 0.75rem; font-weight: 600; color: var(--text-secondary); text-transform: uppercase;" for="filter-category">Category</label>
+                        <select id="filter-category" class="input-field" style="padding-left: var(--space-3); margin-top: 4px; height: 40px;">
+                            <option value="">All Categories</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="font-size: 0.75rem; font-weight: 600; color: var(--text-secondary); text-transform: uppercase;" for="filter-condition">Condition</label>
+                        <select id="filter-condition" class="input-field" style="padding-left: var(--space-3); margin-top: 4px; height: 40px;">
+                            <option value="">Any Condition</option>
+                            <option value="New">New</option>
+                            <option value="Like New">Like New</option>
+                            <option value="Good">Good</option>
+                            <option value="Fair">Fair</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="filter-section">
+                    <div class="floating-group" style="margin-bottom: 0;">
+                        <input type="number" id="filter-price" class="form-input" placeholder=" " min="0">
+                        <label class="form-label" for="filter-price">Max Daily Price ($)</label>
+                    </div>
+                </div>
+
+                <button id="apply-filters-btn" class="btn btn-primary" style="width: 100%;">Apply Filters</button>
+                <button id="clear-filters-btn" class="btn btn-secondary" style="width: 100%; margin-top: var(--space-2);">Clear All</button>
+            </aside>
+
+            <!-- Catalog Section -->
+            <section style="flex-grow: 1;">
+                <div class="catalog-header">
+                    <span id="results-count">Loading listings…</span>
+                </div>
+
+                <!-- Skeleton Container -->
+                <div id="catalog-loader-container"></div>
+
+                <!-- Empty State Container -->
+                <div id="no-items-message" style="display: none;"></div>
+
+                <!-- Dynamic Grid Catalog -->
+                <div id="catalog-list" class="catalog-grid" style="display: none;"></div>
+            </section>
+        </div>
+    </main>
+
+    <div id="footer-mount"></div>
+
+    <!-- Core Modular Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/notification.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/modal.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/validation.js"></script>
+    <script src="js/navbar.js"></script>
+    <script>
+        let wishlistIds = new Set();
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (window.Validation) {
+                Validation.initFloatingLabels();
+            }
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const searchParam = urlParams.get('search');
+            if (searchParam) {
+                const searchInput = document.getElementById('filter-search');
+                searchInput.value = searchParam;
+                // Re-trigger float styling check
+                searchInput.dispatchEvent(new Event('blur'));
+            }
+
+            // Sync user wishlist
+            await fetchWishlist();
+            await loadCategories();
+            await fetchCatalog();
+
+            document.getElementById('apply-filters-btn').addEventListener('click', fetchCatalog);
+            document.getElementById('clear-filters-btn').addEventListener('click', () => {
+                document.getElementById('filter-search').value = '';
+                document.getElementById('filter-category').value = '';
+                document.getElementById('filter-price').value = '';
+                document.getElementById('filter-condition').value = '';
+                
+                // Recheck float inputs
+                document.querySelectorAll('.floating-group .form-input').forEach(input => {
+                    input.dispatchEvent(new Event('blur'));
+                });
+                
+                fetchCatalog();
+            });
+
+            // Instant typing debounced filter trigger
+            document.getElementById('filter-search').addEventListener('input', Utils.debounce(() => {
+                fetchCatalog();
+            }, 400));
+        });
+
+        async function fetchWishlist() {
+            if (!Auth.isLoggedIn()) return;
+            try {
+                const res = await apiFetch('/wishlist');
+                if (res && res.data) {
+                    wishlistIds = new Set(res.data.map(item => item.id));
+                }
+            } catch (err) {
+                console.error("Failed to load wishlist:", err);
+            }
+        }
+
+        async function loadCategories() {
+            try {
+                const response = await apiFetch('/categories');
+                const categorySelect = document.getElementById('filter-category');
+                if (response && response.data) {
+                    response.data.forEach(cat => {
+                        const option = document.createElement('option');
+                        option.value = cat.slug;
+                        option.textContent = cat.name;
+                        categorySelect.appendChild(option);
+                    });
+                }
+            } catch (err) {
+                console.error('Failed to load categories:', err);
+            }
+        }
+
+        async function fetchCatalog() {
+            const loaderContainer = document.getElementById('catalog-loader-container');
+            const list = document.getElementById('catalog-list');
+            const empty = document.getElementById('no-items-message');
+            const countLabel = document.getElementById('results-count');
+
+            // Render skeleton
+            loaderContainer.style.display = 'block';
+            UI.showSkeleton(loaderContainer, 'card-grid', 6);
+            
+            list.style.display = 'none';
+            empty.style.display = 'none';
+            countLabel.textContent = 'Updating gear catalog…';
+
+            const searchVal = document.getElementById('filter-search').value.trim();
+            const categoryVal = document.getElementById('filter-category').value;
+            const priceVal = document.getElementById('filter-price').value;
+            const conditionVal = document.getElementById('filter-condition').value;
+
+            let query = `?page=0&size=50`;
+            if (searchVal) query += `&keyword=${encodeURIComponent(searchVal)}`;
+            if (categoryVal) query += `&categorySlug=${categoryVal}`;
+            if (priceVal) query += `&maxPrice=${parseInt(priceVal) * 100}`; // Convert to cents
+            if (conditionVal) query += `&condition=${encodeURIComponent(conditionVal)}`;
+
+            try {
+                const response = await apiFetch(`/equipment${query}`, { abortKey: 'catalog-search' });
+                loaderContainer.style.display = 'none';
+
+                if (response && response.data && response.data.content && response.data.content.length > 0) {
+                    const items = response.data.content;
+                    countLabel.textContent = `Showing ${items.length} gear listing${items.length !== 1 ? 's' : ''}`;
+                    list.innerHTML = '';
+
+                    items.forEach(item => {
+                        const card = document.createElement('div');
+                        card.className = 'card equipment-card card-hover';
+                        
+                        // Handle click-through redirection to details unless clicking the favorite heart button
+                        card.onclick = (e) => {
+                            if (!e.target.closest('.favorite-badge-btn')) {
+                                window.location.href = `equipment.html?id=${item.id}`;
+                            }
+                        };
+
+                        const isFav = wishlistIds.has(item.id);
+                        const heartIconStr = isFav 
+                            ? `<svg width="15" height="15" viewBox="0 0 24 24" fill="var(--color-danger)" stroke="var(--color-danger)"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>`
+                            : `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>`;
+
+                        const fallBackImg = 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=500&q=80';
+                        const imageSrc = item.imageUrl || fallBackImg;
+
+                        card.innerHTML = `
+                            <div class="favorite-badge-btn ${isFav ? 'active' : ''}" onclick="toggleFavorite(event, ${item.id})">
+                                ${heartIconStr}
+                            </div>
+                            <div class="equipment-img-container">
+                                <img class="equipment-img" src="${imageSrc}" alt="${Utils.sanitize(item.title)}" loading="lazy">
+                            </div>
+                            <div class="equipment-category">${Utils.sanitize(item.categoryName || 'Equipment')}</div>
+                            <h3 class="equipment-title">${Utils.sanitize(item.title)}</h3>
+                            <p class="equipment-desc">${Utils.sanitize(item.description || '')}</p>
+                            <div class="equipment-meta">
+                                <div class="equipment-price">${Utils.formatCurrency(item.dailyRate)}<span>/day</span></div>
+                                <span class="badge badge-active">${Utils.sanitize(item.condition || 'Good')}</span>
+                            </div>
+                        `;
+                        list.appendChild(card);
+                    });
+
+                    list.style.display = 'grid';
+                } else {
+                    countLabel.textContent = '0 items found';
+                    UI.showEmptyState(empty, "No gear listings found", "Try broadening your keyboard search query or resetting filters.");
+                    empty.style.display = 'block';
+                }
+            } catch (err) {
+                // Ignore aborted fetches
+                if (err.name === 'AbortError') return;
+
+                console.error('Failed to load catalog:', err);
+                loaderContainer.style.display = 'none';
+                countLabel.textContent = 'Connection error';
+                UI.showEmptyState(empty, "Failed to load gear catalog", err.message || "Please check that your backend service is running.");
+                empty.style.display = 'block';
+            }
+        }
+
+        async function toggleFavorite(e, id) {
+            e.stopPropagation();
+            if (!Auth.isLoggedIn()) { Auth.requireAuth(); return; }
+
+            const button = e.currentTarget;
+            try {
+                await apiFetch(`/wishlist/${id}`, { method: 'POST' });
+                if (wishlistIds.has(id)) {
+                    wishlistIds.delete(id);
+                    button.classList.remove('active');
+                    button.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>`;
+                    Toast.info("Removed from your wishlist.");
+                } else {
+                    wishlistIds.add(id);
+                    button.classList.add('active');
+                    button.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="var(--color-danger)" stroke="var(--color-danger)"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>`;
+                    Toast.success("Added to your wishlist!");
+                }
+            } catch (err) {
+                console.error("Failed to update wishlist:", err);
+                Toast.error("Failed to update wishlist.");
+            }
+        }
+    </script>
+</body>
+</html>

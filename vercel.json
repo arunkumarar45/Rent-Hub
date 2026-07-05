@@ -1,0 +1,69 @@
+{
+  "version": 2,
+  "name": "renthub-frontend",
+  "framework": null,
+  "buildCommand": null,
+  "outputDirectory": "frontend",
+  "installCommand": null,
+  "routes": [
+    {
+      "src": "/marketplace",
+      "dest": "/frontend/marketplace.html"
+    },
+    {
+      "src": "/login",
+      "dest": "/frontend/login.html"
+    },
+    {
+      "src": "/signup",
+      "dest": "/frontend/signup.html"
+    },
+    {
+      "src": "/dashboard",
+      "dest": "/frontend/dashboard.html"
+    },
+    {
+      "src": "/equipment",
+      "dest": "/frontend/equipment.html"
+    },
+    {
+      "src": "/book",
+      "dest": "/frontend/book.html"
+    },
+    {
+      "src": "/become-owner",
+      "dest": "/frontend/become-owner.html"
+    },
+    {
+      "src": "/how-it-works",
+      "dest": "/frontend/how-it-works.html"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/frontend/$1"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "X-Frame-Options", "value": "SAMEORIGIN" },
+        { "key": "X-XSS-Protection", "value": "1; mode=block" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }
+      ]
+    },
+    {
+      "source": "/js/(.*)\\.js",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=86400, stale-while-revalidate=604800" }
+      ]
+    },
+    {
+      "source": "/css/(.*)\\.css",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=86400, stale-while-revalidate=604800" }
+      ]
+    }
+  ]
+}
