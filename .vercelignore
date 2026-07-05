@@ -1,0 +1,12 @@
+# Exclude backend resources from Vercel deployment
+backend/
+*.jar
+*.war
+.git/
+.mvn/
+compile.log
+run.ps1
+railway.toml
+node_modules/
+.DS_Store
+Thumbs.db
