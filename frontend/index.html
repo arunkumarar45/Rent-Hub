@@ -2323,7 +2323,7 @@
                     items.forEach(item => {
                         const fallback = 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=500&q=80';
                         const imgSrc = item.imageUrl ? Utils.imageUrl(item.imageUrl) : fallback;
-                        const price = typeof Utils !== 'undefined' ? Utils.formatCurrency(item.dailyRate) : `$${(item.dailyRate/100).toFixed(2)}`;
+                        const price = typeof Utils !== 'undefined' ? Utils.formatCurrency(item.dailyRate) : `₹${(item.dailyRate/100).toFixed(2)}`;
                         const title = typeof Utils !== 'undefined' ? Utils.sanitize(item.title) : item.title;
                         const cat = typeof Utils !== 'undefined' ? Utils.sanitize(item.categoryName || 'Equipment') : (item.categoryName || 'Equipment');
 

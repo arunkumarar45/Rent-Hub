@@ -216,11 +216,13 @@ public class BookingServiceImpl implements BookingService {
     @Transactional
     public BookingDto approveBooking(Long id) {
         Booking booking = getBookingAndVerifyOwnership(id);
-        if (booking.getStatus() != BookingStatus.PENDING) {
-            throw new BadRequestException("Only pending bookings can be approved.");
+        if (booking.getStatus() != BookingStatus.PENDING && booking.getStatus() != BookingStatus.ACTIVE) {
+            throw new BadRequestException("Only pending or active bookings can be approved.");
         }
 
-        booking.setStatus(BookingStatus.APPROVED);
+        if (booking.getStatus() == BookingStatus.PENDING) {
+            booking.setStatus(BookingStatus.APPROVED);
+        }
         booking = bookingRepository.save(booking);
 
         notificationService.createInAppNotification(booking.getCustomer().getId(),
@@ -234,8 +236,8 @@ public class BookingServiceImpl implements BookingService {
     @Transactional
     public BookingDto rejectBooking(Long id) {
         Booking booking = getBookingAndVerifyOwnership(id);
-        if (booking.getStatus() != BookingStatus.PENDING) {
-            throw new BadRequestException("Only pending bookings can be rejected.");
+        if (booking.getStatus() != BookingStatus.PENDING && booking.getStatus() != BookingStatus.ACTIVE) {
+            throw new BadRequestException("Only pending or active bookings can be rejected.");
         }
 
         booking.setStatus(BookingStatus.REJECTED);

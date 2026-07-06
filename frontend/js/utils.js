@@ -1,12 +1,12 @@
 // Utility Helpers for RentHub Frontend
 
 const Utils = {
-    // Format numeric cents into USD currency string
+    // Format numeric cents into INR currency string
     formatCurrency(amountInCents) {
-        if (amountInCents === null || amountInCents === undefined) return '$0.00';
-        return new Intl.NumberFormat('en-US', {
+        if (amountInCents === null || amountInCents === undefined) return '₹0.00';
+        return new Intl.NumberFormat('en-IN', {
             style: 'currency',
-            currency: 'USD'
+            currency: 'INR'
         }).format(amountInCents / 100);
     },
 
