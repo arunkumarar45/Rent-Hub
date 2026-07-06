@@ -1,0 +1,21 @@
+﻿name: Deploy to Vercel
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'frontend/**'
+      - 'vercel.json'
+      - '.vercelignore'
+
+jobs:
+  deploy:
+    name: Trigger Vercel Production Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Trigger Vercel Deploy Hook
+        run: |
+          curl -X POST "https://api.vercel.com/v1/integrations/deploy/prj_wjiJvZKIpwr6n1FwPDbV3DSAqwzl/SH8DLA61cZ"
+          echo "Vercel deployment triggered successfully!"
