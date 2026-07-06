@@ -46,6 +46,31 @@ const Auth = {
         return profile ? JSON.parse(profile) : null;
     },
 
+    // Check if current user has admin role
+    isAdmin() {
+        const user = this.getUser();
+        if (!user || !user.roles) return false;
+        return user.roles.includes('ROLE_ADMIN');
+    },
+
+    // Check if current user has owner role
+    isOwner() {
+        const user = this.getUser();
+        if (!user) return false;
+        if (user.isOwner) return true;
+        if (user.roles && user.roles.includes('ROLE_OWNER')) return true;
+        return false;
+    },
+
+    // Get primary role label for display
+    getRole() {
+        const user = this.getUser();
+        if (!user || !user.roles) return 'CUSTOMER';
+        if (user.roles.includes('ROLE_ADMIN')) return 'ADMIN';
+        if (user.roles.includes('ROLE_OWNER')) return 'OWNER';
+        return 'CUSTOMER';
+    },
+
     // Require user session or redirect to login.html
     requireAuth() {
         if (!this.isLoggedIn()) {
@@ -53,11 +78,10 @@ const Auth = {
         }
     },
 
-    // Require specific role or throw error / redirect
+    // Require OWNER or ADMIN role or redirect to become-owner.html
     requireOwner() {
         this.requireAuth();
-        const user = this.getUser();
-        if (!user || !user.isOwner) {
+        if (!this.isOwner() && !this.isAdmin()) {
             window.location.href = 'become-owner.html';
         }
     },
@@ -65,8 +89,7 @@ const Auth = {
     // Require admin privileges
     requireAdmin() {
         this.requireAuth();
-        const user = this.getUser();
-        if (!user || !user.roles || !user.roles.includes('ROLE_ADMIN')) {
+        if (!this.isAdmin()) {
             window.location.href = 'index.html';
         }
     }

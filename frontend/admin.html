@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel — RentHub</title>
+    <meta name="description" content="RentHub Admin Dashboard — Manage users, bookings, and platform reports.">
+    <link rel="stylesheet" href="css/style.css?v=2">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        /* ====== Admin Layout ====== */
+        .admin-layout {
+            display: flex;
+            min-height: calc(100vh - 64px);
+            background: var(--bg-secondary);
+        }
+
+        .admin-sidebar {
+            width: 240px;
+            flex-shrink: 0;
+            background: var(--bg-primary);
+            border-right: 1px solid var(--border-color);
+            padding: var(--space-4) 0;
+            position: sticky;
+            top: 64px;
+            height: calc(100vh - 64px);
+            overflow-y: auto;
+        }
+
+        .admin-sidebar-header {
+            padding: 0 var(--space-4) var(--space-4);
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: var(--space-2);
+        }
+
+        .admin-sidebar-header h2 {
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+        }
+
+        .admin-role-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 6px;
+            padding: 3px 10px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            border-radius: 999px;
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.25);
+        }
+
+        .admin-nav-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            padding: 10px var(--space-4);
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-left: 3px solid transparent;
+            transition: all 0.15s ease;
+            text-decoration: none;
+        }
+
+        .admin-nav-item:hover {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+
+        .admin-nav-item.active {
+            background: rgba(var(--color-primary-rgb, 99, 102, 241), 0.08);
+            color: var(--color-primary);
+            border-left-color: var(--color-primary);
+            font-weight: 600;
+        }
+
+        .admin-main {
+            flex: 1;
+            padding: var(--space-6);
+            overflow-y: auto;
+        }
+
+        .admin-tab { display: none; }
+        .admin-tab.active { display: block; }
+
+        /* ====== Stats Cards ====== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: var(--space-4);
+            margin-bottom: var(--space-6);
+        }
+
+        .stat-card {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: var(--space-4);
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-2);
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+        }
+
+        .stat-card-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stat-card-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--text-secondary);
+        }
+
+        .stat-card-value {
+            font-size: 1.75rem;
+            font-weight: 800;
+            font-family: 'Manrope', sans-serif;
+            color: var(--text-primary);
+            line-height: 1;
+        }
+
+        /* ====== Table ====== */
+        .admin-table-wrapper {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+        }
+
+        .admin-table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-4) var(--space-4);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .admin-table-header h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            font-family: 'Manrope', sans-serif;
+        }
+
+        .search-bar {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+
+        .search-bar input {
+            height: 36px;
+            padding: 0 var(--space-3);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-size: 0.85rem;
+            outline: none;
+            transition: border-color 0.15s;
+            width: 220px;
+        }
+
+        .search-bar input:focus {
+            border-color: var(--color-primary);
+        }
+
+        table { width: 100%; border-collapse: collapse; }
+        thead tr { background: var(--bg-secondary); }
+        th {
+            text-align: left;
+            padding: var(--space-2) var(--space-3);
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-color);
+        }
+        td {
+            padding: var(--space-3);
+            font-size: 0.85rem;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-primary);
+            vertical-align: middle;
+        }
+        tbody tr:last-child td { border-bottom: none; }
+        tbody tr:hover { background: var(--bg-secondary); }
+
+        /* ====== Role Badge ====== */
+        .role-badge {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 999px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+        .role-badge.admin { background: rgba(239,68,68,0.1); color: #ef4444; border: 1px solid rgba(239,68,68,0.25); }
+        .role-badge.owner { background: rgba(245,158,11,0.1); color: #f59e0b; border: 1px solid rgba(245,158,11,0.25); }
+        .role-badge.customer { background: rgba(99,102,241,0.1); color: #6366f1; border: 1px solid rgba(99,102,241,0.25); }
+
+        .status-dot {
+            width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 6px;
+        }
+        .status-dot.active { background: #22c55e; }
+        .status-dot.blocked { background: #ef4444; }
+
+        /* ====== Pagination ====== */
+        .pagination {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: var(--space-2);
+            padding: var(--space-3) var(--space-4);
+            border-top: 1px solid var(--border-color);
+        }
+
+        .pagination button {
+            padding: 6px 14px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .pagination button:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .pagination button:not(:disabled):hover {
+            background: var(--bg-secondary);
+        }
+
+        .pagination-info {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        /* ====== Action Btn ====== */
+        .btn-xs {
+            padding: 4px 10px;
+            font-size: 0.72rem;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            cursor: pointer;
+            border: 1px solid var(--border-color);
+            background: transparent;
+            transition: all 0.15s;
+        }
+        .btn-xs.danger { color: #ef4444; border-color: rgba(239,68,68,0.3); }
+        .btn-xs.danger:hover { background: rgba(239,68,68,0.08); }
+        .btn-xs.success { color: #22c55e; border-color: rgba(34,197,94,0.3); }
+        .btn-xs.success:hover { background: rgba(34,197,94,0.08); }
+        .btn-xs.primary { color: var(--color-primary); border-color: rgba(99,102,241,0.3); }
+        .btn-xs.primary:hover { background: rgba(99,102,241,0.08); }
+
+        /* ====== Page header ====== */
+        .page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--space-6);
+        }
+
+        .page-header h1 {
+            font-size: 1.6rem;
+            font-weight: 800;
+            font-family: 'Manrope', sans-serif;
+        }
+
+        .page-header p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+
+        /* Role select dropdown */
+        .role-select {
+            padding: 3px 8px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-color);
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-size: 0.75rem;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div id="navbar-mount"></div>
+
+    <div class="admin-layout">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar">
+            <div class="admin-sidebar-header">
+                <h2>Admin Panel</h2>
+                <div class="admin-role-badge">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                    ADMIN
+                </div>
+            </div>
+
+            <nav>
+                <a class="admin-nav-item active" id="nav-overview" onclick="showTab('overview')">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg>
+                    Overview
+                </a>
+                <a class="admin-nav-item" id="nav-users" onclick="showTab('users')">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                    Manage Users
+                </a>
+                <a class="admin-nav-item" id="nav-bookings" onclick="showTab('bookings')">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                    All Bookings
+                </a>
+                <a class="admin-nav-item" id="nav-reports" onclick="showTab('reports')">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                    Reports
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="admin-main">
+
+            <!-- ===== OVERVIEW TAB ===== -->
+            <div id="tab-overview" class="admin-tab active">
+                <div class="page-header">
+                    <div>
+                        <h1>System Overview</h1>
+                        <p>Platform-wide statistics and quick actions</p>
+                    </div>
+                    <button class="btn btn-secondary btn-sm" onclick="loadOverview()">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+                        Refresh
+                    </button>
+                </div>
+                <div id="overview-stats" class="stats-grid">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <!-- ===== USERS TAB ===== -->
+            <div id="tab-users" class="admin-tab">
+                <div class="page-header">
+                    <div>
+                        <h1>Manage Users</h1>
+                        <p>View, promote, and block platform users</p>
+                    </div>
+                </div>
+
+                <div class="admin-table-wrapper">
+                    <div class="admin-table-header">
+                        <h3>All Users</h3>
+                        <div class="search-bar">
+                            <input type="text" id="user-search-input" placeholder="Search name or email…" oninput="filterUsers(this.value)">
+                        </div>
+                    </div>
+                    <div id="users-loader" style="padding: var(--space-6); text-align: center; color: var(--text-secondary);">Loading users…</div>
+                    <div id="users-table-wrap" style="display:none;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th>Roles</th>
+                                    <th>Joined</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="users-tbody"></tbody>
+                        </table>
+                        <div class="pagination" id="users-pagination"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== BOOKINGS TAB ===== -->
+            <div id="tab-bookings" class="admin-tab">
+                <div class="page-header">
+                    <div>
+                        <h1>All Bookings</h1>
+                        <p>System-wide booking history and status overview</p>
+                    </div>
+                </div>
+
+                <div class="admin-table-wrapper">
+                    <div class="admin-table-header">
+                        <h3>Booking Log</h3>
+                        <span id="bookings-count" style="font-size:0.8rem; color:var(--text-secondary);"></span>
+                    </div>
+                    <div id="bookings-loader" style="padding: var(--space-6); text-align: center; color: var(--text-secondary);">Loading bookings…</div>
+                    <div id="bookings-table-wrap" style="display:none;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Equipment</th>
+                                    <th>Customer</th>
+                                    <th>Dates</th>
+                                    <th>Total</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="bookings-tbody"></tbody>
+                        </table>
+                        <div class="pagination" id="bookings-pagination"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== REPORTS TAB ===== -->
+            <div id="tab-reports" class="admin-tab">
+                <div class="page-header">
+                    <div>
+                        <h1>System Reports</h1>
+                        <p>Platform revenue, growth, and health metrics</p>
+                    </div>
+                    <button class="btn btn-secondary btn-sm" onclick="loadReports()">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+                        Refresh
+                    </button>
+                </div>
+                <div id="reports-content">
+                    <div class="stats-grid" id="reports-stats"></div>
+
+                    <!-- Monthly bookings chart -->
+                    <div class="card" style="padding: var(--space-5); margin-top: var(--space-4);">
+                        <h3 style="font-size:1rem; font-weight:700; margin-bottom: var(--space-4); font-family:'Manrope',sans-serif;">Monthly Bookings (Current Year)</h3>
+                        <div id="monthly-chart" style="display:flex; align-items:flex-end; gap:8px; height:160px; padding-bottom: var(--space-2); border-bottom: 1px solid var(--border-color);">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <div id="footer-mount"></div>
+
+    <!-- Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/navbar.js"></script>
+    <script>
+        // ── Guard: Admin only ─────────────────────────────────────────────
+        Auth.requireAdmin();
+
+        // ── State ─────────────────────────────────────────────────────────
+        let usersPage = 0;
+        let usersTotalPages = 0;
+        let bookingsPage = 0;
+        let bookingsTotalPages = 0;
+        let allUsersCache = [];
+
+        // ── Tab Navigation ────────────────────────────────────────────────
+        function showTab(tab) {
+            document.querySelectorAll('.admin-tab').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.admin-nav-item').forEach(el => el.classList.remove('active'));
+            document.getElementById('tab-' + tab).classList.add('active');
+            document.getElementById('nav-' + tab).classList.add('active');
+
+            if (tab === 'overview') loadOverview();
+            else if (tab === 'users') loadUsers(0);
+            else if (tab === 'bookings') loadBookings(0);
+            else if (tab === 'reports') loadReports();
+        }
+
+        // ── API Helper ────────────────────────────────────────────────────
+        async function adminFetch(path, options = {}) {
+            const token = Auth.getToken();
+            const res = await fetch(API_BASE_URL + path, {
+                ...options,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token,
+                    ...(options.headers || {})
+                }
+            });
+            if (!res.ok) {
+                const err = await res.json().catch(() => ({}));
+                throw new Error(err.message || 'Request failed: ' + res.status);
+            }
+            return res.json();
+        }
+
+        // ── Overview ──────────────────────────────────────────────────────
+        async function loadOverview() {
+            const container = document.getElementById('overview-stats');
+            container.innerHTML = '<div style="color:var(--text-secondary);font-size:0.85rem;">Loading…</div>';
+            try {
+                const res = await adminFetch('/admin/reports');
+                const d = res.data;
+                container.innerHTML = `
+                    ${statCard('👥', 'Total Users', d.totalUsers, '#6366f1')}
+                    ${statCard('🏠', 'Owners', d.totalOwners, '#f59e0b')}
+                    ${statCard('👤', 'Customers', d.totalCustomers, '#3b82f6')}
+                    ${statCard('🔧', 'Equipment', d.totalEquipment, '#8b5cf6')}
+                    ${statCard('📋', 'Total Bookings', d.totalBookings, '#06b6d4')}
+                    ${statCard('✅', 'Active Bookings', d.activeBookings, '#22c55e')}
+                    ${statCard('⏳', 'Pending', d.pendingBookings, '#f59e0b')}
+                    ${statCard('💰', 'Total Revenue', Utils.formatCurrency(d.totalRevenueCents || 0), '#ef4444')}
+                `;
+            } catch (e) {
+                container.innerHTML = `<div style="color:#ef4444;font-size:0.85rem;">Failed to load stats: ${e.message}</div>`;
+            }
+        }
+
+        function statCard(icon, label, value, color) {
+            return `
+                <div class="stat-card">
+                    <div class="stat-card-icon" style="background:${color}22; color:${color}; font-size:1.2rem;">${icon}</div>
+                    <div class="stat-card-label">${label}</div>
+                    <div class="stat-card-value" style="font-size:1.5rem;">${value}</div>
+                </div>
+            `;
+        }
+
+        // ── Users ─────────────────────────────────────────────────────────
+        async function loadUsers(page) {
+            usersPage = page;
+            const loader = document.getElementById('users-loader');
+            const wrap = document.getElementById('users-table-wrap');
+            loader.style.display = 'block';
+            loader.textContent = 'Loading users…';
+            wrap.style.display = 'none';
+            try {
+                const res = await adminFetch(`/admin/users?page=${page}&size=20`);
+                const data = res.data;
+                allUsersCache = data.content || [];
+                usersTotalPages = data.totalPages || 1;
+                renderUsersTable(allUsersCache);
+                renderUsersPagination(data.pageNumber, data.totalPages, data.totalElements);
+                loader.style.display = 'none';
+                wrap.style.display = 'block';
+            } catch (e) {
+                loader.textContent = 'Failed to load users: ' + e.message;
+            }
+        }
+
+        function renderUsersTable(users) {
+            const tbody = document.getElementById('users-tbody');
+            if (!users.length) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:var(--space-6);color:var(--text-secondary);">No users found</td></tr>';
+                return;
+            }
+            tbody.innerHTML = users.map(u => {
+                const roles = (u.roles || []);
+                const primaryRole = roles.includes('ROLE_ADMIN') ? 'admin' : roles.includes('ROLE_OWNER') ? 'owner' : 'customer';
+                const roleLabel = primaryRole.toUpperCase();
+                const blocked = u.isBlocked;
+                const joined = u.createdAt ? new Date(u.createdAt).toLocaleDateString('en-IN', {year:'numeric',month:'short',day:'numeric'}) : '—';
+                const roleOptions = ['CUSTOMER', 'OWNER', 'ADMIN'].map(r =>
+                    `<option value="${r}" ${r === roleLabel ? 'selected' : ''}>${r}</option>`).join('');
+
+                return `<tr id="user-row-${u.id}">
+                    <td>
+                        <div style="font-weight:600;">${Utils.sanitize(u.firstName + ' ' + u.lastName)}</div>
+                        <div style="font-size:0.75rem;color:var(--text-secondary);">${Utils.sanitize(u.email)}</div>
+                    </td>
+                    <td><span class="role-badge ${primaryRole}">${roleLabel}</span></td>
+                    <td style="font-size:0.78rem;color:var(--text-secondary);">${joined}</td>
+                    <td>
+                        <span class="status-dot ${blocked ? 'blocked' : 'active'}"></span>
+                        <span style="font-size:0.8rem;">${blocked ? 'Blocked' : 'Active'}</span>
+                    </td>
+                    <td>
+                        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+                            <select class="role-select" onchange="updateRole(${u.id}, this.value)" title="Change Role">
+                                ${roleOptions}
+                            </select>
+                            <button class="btn-xs ${blocked ? 'success' : 'danger'}" onclick="toggleBlock(${u.id})" id="block-btn-${u.id}">
+                                ${blocked ? 'Unblock' : 'Block'}
+                            </button>
+                        </div>
+                    </td>
+                </tr>`;
+            }).join('');
+        }
+
+        function renderUsersPagination(page, totalPages, totalElements) {
+            const el = document.getElementById('users-pagination');
+            el.innerHTML = `
+                <span class="pagination-info">${totalElements} total</span>
+                <button onclick="loadUsers(${page - 1})" ${page <= 0 ? 'disabled' : ''}>← Prev</button>
+                <span class="pagination-info">Page ${page + 1} of ${totalPages}</span>
+                <button onclick="loadUsers(${page + 1})" ${page >= totalPages - 1 ? 'disabled' : ''}>Next →</button>
+            `;
+        }
+
+        function filterUsers(query) {
+            if (!query.trim()) {
+                renderUsersTable(allUsersCache);
+                return;
+            }
+            const q = query.toLowerCase();
+            const filtered = allUsersCache.filter(u =>
+                (u.firstName + ' ' + u.lastName + ' ' + u.email).toLowerCase().includes(q));
+            renderUsersTable(filtered);
+        }
+
+        async function updateRole(userId, newRole) {
+            try {
+                await adminFetch(`/admin/users/${userId}/role`, {
+                    method: 'PATCH',
+                    body: JSON.stringify({ role: newRole })
+                });
+                showToast('✅ Role updated to ' + newRole);
+                await loadUsers(usersPage);
+            } catch (e) {
+                showToast('❌ Failed: ' + e.message, 'error');
+            }
+        }
+
+        async function toggleBlock(userId) {
+            const btn = document.getElementById('block-btn-' + userId);
+            if (btn) btn.disabled = true;
+            try {
+                const res = await adminFetch(`/admin/users/${userId}/block`, { method: 'PATCH' });
+                const updated = res.data;
+                showToast(updated.isBlocked ? '🚫 User blocked' : '✅ User unblocked');
+                await loadUsers(usersPage);
+            } catch (e) {
+                showToast('❌ Failed: ' + e.message, 'error');
+                if (btn) btn.disabled = false;
+            }
+        }
+
+        // ── Bookings ──────────────────────────────────────────────────────
+        async function loadBookings(page) {
+            bookingsPage = page;
+            const loader = document.getElementById('bookings-loader');
+            const wrap = document.getElementById('bookings-table-wrap');
+            loader.style.display = 'block';
+            loader.textContent = 'Loading bookings…';
+            wrap.style.display = 'none';
+            try {
+                const res = await adminFetch(`/admin/bookings?page=${page}&size=20`);
+                const data = res.data;
+                const bookings = data.content || [];
+                bookingsTotalPages = data.totalPages || 1;
+
+                document.getElementById('bookings-count').textContent = `${data.totalElements || 0} total bookings`;
+
+                const tbody = document.getElementById('bookings-tbody');
+                if (!bookings.length) {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:var(--space-6);color:var(--text-secondary);">No bookings found</td></tr>';
+                } else {
+                    tbody.innerHTML = bookings.map(b => {
+                        const statusColors = {
+                            PENDING: '#f59e0b', APPROVED: '#3b82f6', ACTIVE: '#22c55e',
+                            COMPLETED: '#6366f1', CANCELLED: '#6b7280', REJECTED: '#ef4444'
+                        };
+                        const statusColor = statusColors[b.status] || '#6b7280';
+                        const start = b.startDate ? new Date(b.startDate).toLocaleDateString('en-IN',{month:'short',day:'numeric'}) : '—';
+                        const end = b.endDate ? new Date(b.endDate).toLocaleDateString('en-IN',{month:'short',day:'numeric',year:'numeric'}) : '—';
+                        return `<tr>
+                            <td style="font-size:0.78rem;color:var(--text-secondary);">#${b.id}</td>
+                            <td><strong style="font-weight:600;">${Utils.sanitize(b.equipmentTitle || 'Equipment')}</strong></td>
+                            <td style="font-size:0.78rem;">${b.customerName || ('Customer #' + b.customerId)}</td>
+                            <td style="font-size:0.78rem;white-space:nowrap;">${start} – ${end}</td>
+                            <td style="font-weight:600;">${Utils.formatCurrency(b.totalPrice || 0)}</td>
+                            <td>
+                                <span style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:999px;font-size:0.65rem;font-weight:700;background:${statusColor}18;color:${statusColor};border:1px solid ${statusColor}33;">
+                                    ${b.status}
+                                </span>
+                            </td>
+                        </tr>`;
+                    }).join('');
+                }
+
+                renderBookingsPagination(data.pageNumber, data.totalPages, data.totalElements);
+                loader.style.display = 'none';
+                wrap.style.display = 'block';
+            } catch (e) {
+                loader.textContent = 'Failed to load bookings: ' + e.message;
+            }
+        }
+
+        function renderBookingsPagination(page, totalPages, totalElements) {
+            const el = document.getElementById('bookings-pagination');
+            el.innerHTML = `
+                <span class="pagination-info">${totalElements} total</span>
+                <button onclick="loadBookings(${page - 1})" ${page <= 0 ? 'disabled' : ''}>← Prev</button>
+                <span class="pagination-info">Page ${page + 1} of ${totalPages}</span>
+                <button onclick="loadBookings(${page + 1})" ${page >= totalPages - 1 ? 'disabled' : ''}>Next →</button>
+            `;
+        }
+
+        // ── Reports ───────────────────────────────────────────────────────
+        async function loadReports() {
+            const statsEl = document.getElementById('reports-stats');
+            const chartEl = document.getElementById('monthly-chart');
+            statsEl.innerHTML = '<div style="color:var(--text-secondary);font-size:0.85rem;">Loading…</div>';
+            try {
+                const res = await adminFetch('/admin/reports');
+                const d = res.data;
+                statsEl.innerHTML = `
+                    ${statCard('💰', 'Total Platform Revenue', Utils.formatCurrency(d.totalRevenueCents || 0), '#22c55e')}
+                    ${statCard('📋', 'Total Bookings', d.totalBookings, '#3b82f6')}
+                    ${statCard('✅', 'Completed', d.completedBookings, '#6366f1')}
+                    ${statCard('🔴', 'Pending', d.pendingBookings, '#f59e0b')}
+                `;
+
+                // Monthly bookings bar chart
+                const monthly = d.monthlyBookings || {};
+                const months = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+                const maxVal = Math.max(...months.map(m => monthly[m] || 0), 1);
+                chartEl.innerHTML = months.map(m => {
+                    const val = monthly[m] || 0;
+                    const pct = Math.round((val / maxVal) * 100);
+                    return `
+                        <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px;">
+                            <span style="font-size:0.65rem;font-weight:700;color:var(--text-secondary);">${val > 0 ? val : ''}</span>
+                            <div style="width:100%;background:var(--bg-secondary);border-radius:4px 4px 0 0;height:${pct}%;min-height:4px;background:linear-gradient(to top,#6366f1,#8b5cf6);transition:height 0.5s ease;"></div>
+                            <span style="font-size:0.6rem;color:var(--text-secondary);font-weight:600;">${m}</span>
+                        </div>
+                    `;
+                }).join('');
+
+            } catch (e) {
+                statsEl.innerHTML = `<div style="color:#ef4444;font-size:0.85rem;">Failed to load report: ${e.message}</div>`;
+            }
+        }
+
+        // ── Toast ─────────────────────────────────────────────────────────
+        function showToast(msg, type = 'success') {
+            const t = document.createElement('div');
+            t.style.cssText = `position:fixed;bottom:24px;right:24px;z-index:9999;padding:12px 20px;border-radius:10px;font-size:0.85rem;font-weight:600;color:#fff;background:${type === 'error' ? '#ef4444' : '#22c55e'};box-shadow:0 8px 24px rgba(0,0,0,0.18);animation:fadein 0.3s ease;`;
+            t.textContent = msg;
+            document.body.appendChild(t);
+            setTimeout(() => t.remove(), 3000);
+        }
+
+        // ── Init ──────────────────────────────────────────────────────────
+        document.addEventListener('DOMContentLoaded', () => {
+            loadOverview();
+        });
+    </script>
+</body>
+</html>

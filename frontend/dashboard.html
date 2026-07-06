@@ -234,7 +234,7 @@
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
                         <span>Owner Panel</span>
                     </a>
-                    <a href="#" class="sidebar-link" id="tab-admin-btn" style="display: none;" onclick="switchTab(event, 'admin')">
+                    <a href="admin.html" class="sidebar-link" id="tab-admin-btn" style="display: none;">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m4.93 4.93 4.24 4.24M14.83 9.17l4.24-4.24M9.17 14.83l-4.24 4.24M14.83 14.83l4.24 4.24"/></svg>
                         <span>Admin Center</span>
                     </a>
@@ -560,7 +560,6 @@
 
             if (tabName === 'renter') loadRenterHub();
             if (tabName === 'owner') loadOwnerPanel();
-            if (tabName === 'admin') loadAdminPanel();
         }
 
         // ==================== RENTER TAB ====================

@@ -39,6 +39,10 @@
       "dest": "/frontend/how-it-works.html"
     },
     {
+      "src": "/admin",
+      "dest": "/frontend/admin.html"
+    },
+    {
       "src": "/(.*)",
       "dest": "/frontend/$1"
     }

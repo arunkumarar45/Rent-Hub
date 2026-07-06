@@ -18,8 +18,11 @@ function renderNavbar() {
 
     const isLoggedIn = Auth.isLoggedIn();
     const user = Auth.getUser();
-    const isOwner = user ? user.isOwner : false;
+    const isAdmin = user ? Auth.isAdmin() : false;
+    const isOwner = user ? Auth.isOwner() : false;
     const initial = user && user.firstName ? user.firstName.charAt(0).toUpperCase() : 'U';
+    const roleLabel = user ? Auth.getRole() : '';
+    const roleBadgeColor = roleLabel === 'ADMIN' ? '#ef4444' : roleLabel === 'OWNER' ? '#f59e0b' : '#6366f1';
 
     const navbarHTML = `
         <nav class="navbar">
@@ -63,20 +66,33 @@ function renderNavbar() {
 
                         <!-- User Profile Menu -->
                         <div class="user-menu-container">
-                            <div class="user-avatar" id="avatar-btn">${initial}</div>
+                            <div class="user-avatar" id="avatar-btn" style="background: ${roleBadgeColor};">${initial}</div>
                             <div class="user-menu-dropdown" id="user-dropdown-menu">
                                 <div style="padding: var(--space-2) var(--space-3); border-bottom: 1px solid var(--border-color); margin-bottom: var(--space-1);">
                                     <div style="font-weight: 600; font-size: 0.85rem;">${Utils.sanitize(user.firstName)} ${Utils.sanitize(user.lastName)}</div>
                                     <div style="font-size: 0.75rem; color: var(--text-secondary);">${Utils.sanitize(user.email)}</div>
+                                    <span style="display:inline-block; margin-top:4px; font-size:0.65rem; font-weight:700; letter-spacing:0.05em; padding:2px 8px; border-radius:999px; background:${roleBadgeColor}22; color:${roleBadgeColor}; border:1px solid ${roleBadgeColor}44;">${roleLabel}</span>
                                 </div>
                                 <a href="dashboard.html" class="user-menu-item">
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg>
                                     Dashboard
                                 </a>
+                                ${isAdmin ? `
+                                <a href="admin.html" class="user-menu-item" style="color: #ef4444;">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><polyline points="9 12 11 14 15 10"></polyline></svg>
+                                    Admin Panel
+                                </a>
+                                ` : isOwner ? `
+                                <a href="become-owner.html" class="user-menu-item">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                                    My Listings
+                                </a>
+                                ` : `
                                 <a href="become-owner.html" class="user-menu-item">
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
                                     List Your Gear
                                 </a>
+                                `}
                                 <a href="#" id="logout-btn" class="user-menu-item" style="color: var(--color-danger); border-top: 1px solid var(--border-color); margin-top: var(--space-1); border-radius: 0 0 var(--radius-sm) var(--radius-sm);">
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
                                     Sign Out
@@ -94,6 +110,7 @@ function renderNavbar() {
             </div>
         </nav>
     `;
+
     
     navbarContainer.innerHTML = navbarHTML;
 
