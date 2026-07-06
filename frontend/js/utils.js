@@ -61,6 +61,22 @@ const Utils = {
         const temp = document.createElement('div');
         temp.textContent = str;
         return temp.innerHTML;
+    },
+
+    // Resolve local relative paths to backend origin
+    imageUrl(path) {
+        if (!path) return '';
+        if (path.startsWith('/')) {
+            const baseUrl = (typeof API_BASE_URL !== 'undefined') 
+                ? API_BASE_URL 
+                : ((window.RENTHUB_CONFIG && window.RENTHUB_CONFIG.apiBaseUrl) || 'http://localhost:8080/api/v1');
+            try {
+                return `${new URL(baseUrl).origin}${path}`;
+            } catch (e) {
+                return path;
+            }
+        }
+        return path;
     }
 };
 window.Utils = Utils;

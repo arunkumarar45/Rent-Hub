@@ -250,7 +250,7 @@
 
                     document.getElementById('bc-equipment').textContent = item.title;
                     document.getElementById('bc-equipment').href = `equipment.html?id=${equipmentId}`;
-                    document.getElementById('summary-image').src = item.imageUrl || 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=200&q=80';
+                    document.getElementById('summary-image').src = item.imageUrl ? Utils.imageUrl(item.imageUrl) : 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=200&q=80';
                     document.getElementById('summary-image').alt = item.title;
                     document.getElementById('summary-name').textContent = item.title;
                     document.getElementById('summary-daily-rate').textContent = `${Utils.formatCurrency(item.dailyRate)}/day base rate`;

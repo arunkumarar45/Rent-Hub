@@ -1,11 +1,8 @@
-/**
- * RentHub Runtime Configuration
- *
- * LOCAL DEVELOPMENT: change apiBaseUrl to http://localhost:8080/api/v1
- * PRODUCTION: points to Railway backend deployment
- */
+const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
 window.RENTHUB_CONFIG = {
-    apiBaseUrl: 'https://rent-hub-production-b097.up.railway.app/api/v1',
+    apiBaseUrl: isLocal 
+        ? 'http://localhost:8080/api/v1' 
+        : 'https://rent-hub-production-b097.up.railway.app/api/v1',
     version: '1.0.0',
-    env: 'production'
+    env: isLocal ? 'development' : 'production'
 };

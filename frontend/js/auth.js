@@ -17,7 +17,7 @@ const Auth = {
         // Send a call to backend to revoke refresh token if possible
         const refreshToken = localStorage.getItem('auth_refresh_token');
         if (refreshToken) {
-            fetch('http://localhost:8080/api/v1/auth/logout', {
+            fetch(`${API_BASE_URL}/auth/logout`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ refreshToken })

@@ -30,3 +30,5 @@ ehthumbs.db
 # ---- Node (if ever added) ----
 node_modules/
 npm-debug.log
+
+.vercel

@@ -212,6 +212,12 @@ public class PaymentServiceImpl implements PaymentService {
         if (stripeApiKey == null || stripeApiKey.isEmpty()) {
             transaction.setStatus("SUCCESS");
             transactionRepository.save(transaction);
+            
+            // Set booking status to ACTIVE
+            Booking booking = transaction.getBooking();
+            booking.setStatus(BookingStatus.ACTIVE);
+            bookingRepository.save(booking);
+            
             log.info("Mock verification success for Stripe transaction");
             return;
         }
@@ -221,6 +227,12 @@ public class PaymentServiceImpl implements PaymentService {
             if ("paid".equals(session.getPaymentStatus())) {
                 transaction.setStatus("SUCCESS");
                 transactionRepository.save(transaction);
+                
+                // Set booking status to ACTIVE
+                Booking booking = transaction.getBooking();
+                booking.setStatus(BookingStatus.ACTIVE);
+                bookingRepository.save(booking);
+                
                 log.info("Stripe transaction marked as SUCCESS");
             } else {
                 transaction.setStatus("FAILED");
@@ -244,6 +256,11 @@ public class PaymentServiceImpl implements PaymentService {
             transaction.setPaymentId(paymentId);
             transaction.setStatus("SUCCESS");
             transactionRepository.save(transaction);
+            
+            // Set booking status to ACTIVE
+            Booking booking = transaction.getBooking();
+            booking.setStatus(BookingStatus.ACTIVE);
+            bookingRepository.save(booking);
             return;
         }
 
@@ -258,6 +275,12 @@ public class PaymentServiceImpl implements PaymentService {
                 transaction.setPaymentId(paymentId);
                 transaction.setStatus("SUCCESS");
                 transactionRepository.save(transaction);
+                
+                // Set booking status to ACTIVE
+                Booking booking = transaction.getBooking();
+                booking.setStatus(BookingStatus.ACTIVE);
+                bookingRepository.save(booking);
+                
                 log.info("Razorpay transaction marked as SUCCESS");
             } else {
                 transaction.setStatus("FAILED");

@@ -276,7 +276,7 @@
                     document.getElementById('breadcrumb-title').textContent = item.title;
                     document.title = `${item.title} - RentHub`;
 
-                    document.getElementById('item-image').src = item.imageUrl || 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=800&q=80';
+                    document.getElementById('item-image').src = item.imageUrl ? Utils.imageUrl(item.imageUrl) : 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=800&q=80';
                     document.getElementById('item-image').alt = item.title;
                     document.getElementById('item-title').textContent = item.title;
                     document.getElementById('item-category').textContent = item.categoryName || 'Equipment';

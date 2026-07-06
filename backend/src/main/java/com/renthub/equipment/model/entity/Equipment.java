@@ -56,7 +56,7 @@ public class Equipment {
     @Column(nullable = false)
     private String location;
 
-    @Column(name = "image_url", length = 500)
+    @Column(name = "image_url", length = 2048)
     private String imageUrl;
 
     @Column(name = "is_active", nullable = false)
@@ -69,7 +69,7 @@ public class Equipment {
 
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "equipment_images", joinColumns = @JoinColumn(name = "equipment_id"))
-    @Column(name = "image_url")
+    @Column(name = "image_url", length = 2048)
     @Builder.Default
     private List<String> images = new ArrayList<>();
 

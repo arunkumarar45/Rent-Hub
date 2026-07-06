@@ -327,7 +327,7 @@
                         imageUrlInput.dispatchEvent(new Event('blur'));
 
                         // Show preview thumbnail
-                        preview.src = uploadedUrl;
+                        preview.src = Utils.imageUrl(uploadedUrl);
                         preview.style.display = 'block';
                         dzText.style.display = 'none';
                         dzSub.style.display = 'none';
